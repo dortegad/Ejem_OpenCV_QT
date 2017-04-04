@@ -1,3 +1,4 @@
+//Comentario
 #include "ejem_opencv_qt.h"
 #include "pxcsensemanager.h"
 #include "pxcmetadata.h"
