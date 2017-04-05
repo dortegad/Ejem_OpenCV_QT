@@ -490,7 +490,7 @@ PXCSenseManager * Ejem_OpenCV_QT::setup()
 
 	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 640, 480, 30.0F);
 	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480, 30.0F);
-	//pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480, 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480, 30.0F);
 
 	return pp;
 }
@@ -678,7 +678,7 @@ int Ejem_OpenCV_QT::stream(PXCSenseManager *pp)
 	while (!stopStream) //(int nframes = 0; nframes<cmdl.m_nframes; nframes++) {
 	{
 		//Waits until new frame is available and locks it for application processing 
-		sts = pp->AcquireFrame(true,300);		
+		sts = pp->AcquireFrame(true);		
 		//std::cout << sts << std::endl;
 
 		if (sts<PXC_STATUS_NO_ERROR) {
