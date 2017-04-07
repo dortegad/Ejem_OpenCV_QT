@@ -18,7 +18,7 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>1020</y>
+      <y>1100</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -30,10 +30,10 @@
    <widget class="QLabel" name="lImg_1">
     <property name="geometry">
      <rect>
-      <x>20</x>
+      <x>10</x>
       <y>200</y>
-      <width>981</width>
-      <height>781</height>
+      <width>1001</width>
+      <height>891</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -94,7 +94,7 @@
     <property name="geometry">
      <rect>
       <x>120</x>
-      <y>1020</y>
+      <y>1100</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -102,84 +102,6 @@
     <property name="text">
      <string>Stop</string>
     </property>
-   </widget>
-   <widget class="QGroupBox" name="groupBox_2">
-    <property name="geometry">
-     <rect>
-      <x>280</x>
-      <y>990</y>
-      <width>731</width>
-      <height>171</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>File</string>
-    </property>
-    <widget class="QPushButton" name="pBShowImg_3">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>100</y>
-       <width>101</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Play</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pBShowImg_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>101</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>Record</string>
-     </property>
-    </widget>
-    <widget class="QLineEdit" name="lEfileName">
-     <property name="geometry">
-      <rect>
-       <x>120</x>
-       <y>50</y>
-       <width>541</width>
-       <height>41</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>D:\newfile.rssdk</string>
-     </property>
-    </widget>
-    <widget class="QLabel" name="label">
-     <property name="geometry">
-      <rect>
-       <x>20</x>
-       <y>50</y>
-       <width>71</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>file name</string>
-     </property>
-    </widget>
-    <widget class="QPushButton" name="pushButton">
-     <property name="geometry">
-      <rect>
-       <x>670</x>
-       <y>50</y>
-       <width>31</width>
-       <height>31</height>
-      </rect>
-     </property>
-     <property name="text">
-      <string>...</string>
-     </property>
-    </widget>
    </widget>
    <widget class="QSplitter" name="splitter_2">
     <property name="geometry">
@@ -251,9 +173,6 @@
       </property>
      </widget>
     </widget>
-    <zorder>splitter_3</zorder>
-    <zorder>groupBox</zorder>
-    <zorder>groupBox</zorder>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -298,38 +217,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>pBShowImg_2</sender>
-   <signal>clicked()</signal>
-   <receiver>VisorRealSenseOneClass</receiver>
-   <slot>record()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>94</x>
-     <y>501</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>135</x>
-     <y>468</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pBShowImg_3</sender>
-   <signal>clicked()</signal>
-   <receiver>VisorRealSenseOneClass</receiver>
-   <slot>play()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>130</x>
-     <y>525</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>134</x>
-     <y>512</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>pBShowImg_4</sender>
    <signal>clicked()</signal>
    <receiver>VisorRealSenseOneClass</receiver>
@@ -342,22 +229,6 @@
     <hint type="destinationlabel">
      <x>134</x>
      <y>552</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>clicked()</signal>
-   <receiver>VisorRealSenseOneClass</receiver>
-   <slot>selectFile()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>632</x>
-     <y>482</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>678</x>
-     <y>494</y>
     </hint>
    </hints>
   </connection>

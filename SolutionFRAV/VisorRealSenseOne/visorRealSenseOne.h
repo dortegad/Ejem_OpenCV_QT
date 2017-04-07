@@ -26,10 +26,10 @@ class VisorRealSenseOne : public QMainWindow
 
 public slots:
 	int view();
-	int record();
-	int play();
+	//int record();
+	//int play();
 	void stop();
-	void selectFile();
+	//void selectFile();
 
 public:
 	VisorRealSenseOne(QWidget *parent = 0);
