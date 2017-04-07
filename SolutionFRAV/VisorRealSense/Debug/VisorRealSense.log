@@ -1,28 +1,9 @@
-﻿Build started 05/04/2017 17:35:14.
+﻿Build started 06/04/2017 11:07:22.
      1>Project "D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\VisorRealSense\VisorRealSense.vcxproj" on node 2 (Build target(s)).
-     1>CustomBuild:
-         Moc'ing visorRealSense.h...
-         Uic'ing visorRealSense.ui...
-         Rcc'ing visorRealSense.qrc...
-     1>RCC : warning : No resources in 'D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\VisorRealSense\visorRealSense.qrc'.
-         
-       ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\Qt5.6.2\5.6\msvc2013\include /I.\GeneratedFiles\Debug /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtCore /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtGui /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtWidgets /I"C:\opencv-3.2.0\build\install\include" /I\Include /I"C:\Program Files (x86)\Intel\RSSDK\/include" /I"C:\Program Files (x86)\Intel\RSSDK\/sample/common/include" /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtWinExtras /Zi /nologo /W3 /WX- /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D QT_WINEXTRAS_LIB /Gm- /EHsc /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\Debug\moc_visorRealSense.cpp visorRealSense.cpp main.cpp
-         moc_visorRealSense.cpp
-         visorRealSense.cpp
-         main.cpp
-         Generating Code...
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I.\GeneratedFiles /I. /IC:\Qt\Qt5.6.2\5.6\msvc2013\include /I.\GeneratedFiles\Debug /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtCore /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtGui /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtWidgets /I"C:\opencv-3.2.0\build\install\include" /I\Include /I"C:\Program Files (x86)\Intel\RSSDK\/include" /I"C:\Program Files (x86)\Intel\RSSDK\/sample/common/include" /IC:\Qt\Qt5.6.2\5.6\msvc2013\include\QtWinExtras /Zi /nologo /W3 /WX- /Od /Oy- /D UNICODE /D WIN32 /D WIN64 /D QT_DLL /D QT_CORE_LIB /D QT_GUI_LIB /D QT_WIDGETS_LIB /D QT_WINEXTRAS_LIB /Gm- /EHsc /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt GeneratedFiles\qrc_visorRealSense.cpp
-         qrc_visorRealSense.cpp
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\Win32\Debug\\VisorRealSense.exe" /NOLOGO /LIBPATH:C:\Qt\Qt5.6.2\5.6\msvc2013\lib /LIBPATH:"C:\opencv-3.2.0\build\install\x86\vc12\lib" /LIBPATH:"C:\Program Files (x86)\Intel\RSSDK\/lib/Win32" /LIBPATH:"C:\Program Files (x86)\Intel\RSSDK\/sample/common/lib/Win32/v120" qtmaind.lib Qt5Cored.lib Qt5Guid.lib Qt5Widgetsd.lib Qt5WinExtrasd.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib opencv_calib3d320d.lib opencv_core320d.lib opencv_features2d320d.lib opencv_flann320d.lib opencv_highgui320d.lib opencv_imgcodecs320d.lib opencv_imgproc320d.lib opencv_ml320d.lib opencv_objdetect320d.lib opencv_photo320d.lib opencv_shape320d.lib opencv_stitching320d.lib opencv_superres320d.lib opencv_video320d.lib opencv_videoio320d.lib opencv_videostab320d.lib libpxc_d.lib libpxcutils_d.lib /NODEFAULTLIB:libcmt.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\Win32\Debug\VisorRealSense.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\Win32\Debug\VisorRealSense.lib" /MACHINE:X86 /SAFESEH Debug\moc_visorRealSense.obj
-         Debug\qrc_visorRealSense.obj
-         Debug\visorRealSense.obj
-         Debug\main.obj
-         LINK : D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\Win32\Debug\\VisorRealSense.exe not found or not built by the last incremental link; performing full link
+     1>Link:
          VisorRealSense.vcxproj -> D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\Win32\Debug\VisorRealSense.exe
      1>Done Building Project "D:\REALSENSE\pro\Ejem_OpenCV_QT\SolutionFRAV\VisorRealSense\VisorRealSense.vcxproj" (Build target(s)).
 
 Build succeeded.
 
-Time Elapsed 00:00:12.50
+Time Elapsed 00:00:00.08

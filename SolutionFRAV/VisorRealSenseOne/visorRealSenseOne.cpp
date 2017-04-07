@@ -34,7 +34,6 @@ VisorRealSenseOne::VisorRealSenseOne(QWidget *parent)
 //--------------------------------------------------------------------------------------------------------------
 VisorRealSenseOne::~VisorRealSenseOne()
 {
-
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -59,49 +58,6 @@ void VisorRealSenseOne::showImg_1(const cv::Mat &imagen)
 	imgMostrar.release();
 }
 
-//--------------------------------------------------------------------------------------------------------------
-void VisorRealSenseOne::showImg_2(const cv::Mat &imagen)
-{
-	if (ui.rBRealSizeImg_2->isChecked())
-		cv::imshow(WINNAME_Depth, imagen);
-	else
-		cv::destroyWindow(WINNAME_Depth);
-
-	cv::Mat imgMostrar;
-	if (imagen.type() == CV_8UC1)
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_GRAY2RGB);
-	else
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_BGR2RGB);
-
-	QImage imagenQT = QImage((const unsigned char *)imgMostrar.data, imgMostrar.cols, imgMostrar.rows, imgMostrar.step, QImage::Format_RGB888);
-	ui.lImg_2->setPixmap(QPixmap::fromImage(imagenQT));
-	ui.lImg_2->setScaledContents(true);
-	ui.lImg_2->repaint();
-	qApp->processEvents();
-	imgMostrar.release();
-}
-
-//--------------------------------------------------------------------------------------------------------------
-void VisorRealSenseOne::showImg_3(const cv::Mat &imagen)
-{
-	if (ui.rBRealSizeImg_3->isChecked())
-		cv::imshow(WINNAME_IR, imagen);
-	else
-		cv::destroyWindow(WINNAME_IR);
-
-	cv::Mat imgMostrar;
-	if (imagen.type() == CV_8UC1)
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_GRAY2RGB);
-	else
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_BGR2RGB);
-
-	QImage imagenQT = QImage((const unsigned char *)imgMostrar.data, imgMostrar.cols, imgMostrar.rows, imgMostrar.step, QImage::Format_RGB888);
-	ui.lImg_3->setPixmap(QPixmap::fromImage(imagenQT));
-	ui.lImg_3->setScaledContents(true);
-	ui.lImg_3->repaint();
-	qApp->processEvents();
-	imgMostrar.release();
-}
 
 //--------------------------------------------------------------------------------------------------------------
 void VisorRealSenseOne::ConvertPXCImageToOpenCVMat(PXCImage *inImg,
@@ -210,8 +166,6 @@ void VisorRealSenseOne::createMapDepth(PXCProjection *projection,
 	depth->ReleaseAccess(&ddata);
 	delete uvmap;
 
-
-
 	/*
 	int dsize = dcords.size();
 	PXCPoint3DF32 invP3D = { -1.f, -1.f, 0.f };
@@ -244,87 +198,95 @@ bool VisorRealSenseOne::showSampleAdjustColor(PXCCapture::Device *device,
 	 }
 	 */
 
-	 if (sample->color)
-	 {
-		 //PXCProjection *projection = device->CreateProjection();
-		 //PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
+	if (this->ui.rBRGB->isChecked())
+	{
+		if (sample->color)
+		{
+			//PXCProjection *projection = device->CreateProjection();
+			//PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
 
-		 cv::Mat *img = new cv::Mat();
-		 ConvertPXCImageToOpenCVMat(sample->color, img);
-		 this->showImg_1(*img);
-		 delete img;
+			cv::Mat *img = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->color, img);
+			this->showImg_1(*img);
+			delete img;
 
-		 //imgColorToDepth->Release();
-		 //projection->Release();
-	 }
+			//imgColorToDepth->Release();
+			//projection->Release();
+		}
+	}
+	else
+	{
+		if (sample->depth)
+		{
+			PXCProjection *projection = device->CreateProjection();
 
-	 if (sample->depth)
-	 {
-		 PXCProjection *projection = device->CreateProjection();
+			//Se calcula la proyeccion para los puntos IR
+			cv::Mat *img_ir = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
+			cv::Mat_<uchar> new_img_ir = cv::Mat::zeros(img_ir->rows, img_ir->cols, img_ir->type());
 
-		 //Se calcula la proyeccion para los puntos IR
-		 cv::Mat *img_ir = new cv::Mat();
-		 ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
-		 cv::Mat_<uchar> new_img_ir = cv::Mat::zeros(img_ir->rows, img_ir->cols, img_ir->type());
+			std::vector<PXCPoint3DF32> mapDepth;
+			createMapDepth(projection, sample->depth, mapDepth);
+			if (mapDepth.size() > 0)
+			{
+				std::vector<PXCPointF32> ccords;
+				PXCPointF32 invP = { -1.f, -1.f };
+				ccords.resize(mapDepth.size(), invP);
+				projection->MapDepthToColor(mapDepth.size(), &mapDepth[0], &ccords[0]);
 
-		 std::vector<PXCPoint3DF32> mapDepth;
-		 createMapDepth(projection,
-			 sample->depth,
-			 mapDepth);
-		 if (mapDepth.size() > 0)
-		 {
-			 std::vector<PXCPointF32> ccords;
-			 PXCPointF32 invP = { -1.f, -1.f };
-			 ccords.resize(mapDepth.size(), invP);
-			 projection->MapDepthToColor(mapDepth.size(), &mapDepth[0], &ccords[0]);
+				for (unsigned int i = 0; i < ccords.size(); i++)
+				{
+					if ((ccords[i].y > 0) && (ccords[i].x > 0) && (ccords[i].y < img_ir->rows) && (ccords[i].x < img_ir->cols))
+						new_img_ir(ccords[i].y, ccords[i].x) = img_ir->at<uchar>(mapDepth[i].y, mapDepth[i].x);
+				}
+			}
 
-			 for (unsigned int i = 0; i < ccords.size(); i++)
-			 {
-				 if ((ccords[i].y > 0) && (ccords[i].x > 0) && (ccords[i].y < img_ir->rows) && (ccords[i].x < img_ir->cols))
-					 new_img_ir(ccords[i].y, ccords[i].x) = img_ir->at<uchar>(mapDepth[i].y, mapDepth[i].x);
-			 }
-			 this->showImg_3(new_img_ir);
-			 //cv::imshow("prueba", new_img_ir);
-		 }
-		 
-		 PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
-		 cv::Mat *img_depth = new cv::Mat();
-		 ConvertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
+			PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
+			cv::Mat *img_depth = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
 
-		 double min;
-		 double max;
-		 cv::minMaxIdx(*img_depth, &min, &max);
-		 cv::Mat adjMap;
-		 float scale = 255 / (max - min);
-		 img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-		 cv::equalizeHist(adjMap, adjMap);
+			double min;
+			double max;
+			cv::minMaxIdx(*img_depth, &min, &max);
+			cv::Mat adjMap;
+			float scale = 255 / (max - min);
+			img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
+			cv::equalizeHist(adjMap, adjMap);
 
-		 /*
-		 cv::Mat recorte = (*img_depth)(cv::Rect(100, 100, 300, 300)).clone();
-		 recorte.convertTo(recorte, CV_8UC1, scale, -min*scale);
-		 cv::equalizeHist(recorte, recorte);
-		 cv::imshow("prueba", recorte);
-		 */
+			/*
+			cv::Mat recorte = (*img_depth)(cv::Rect(100, 100, 300, 300)).clone();
+			recorte.convertTo(recorte, CV_8UC1, scale, -min*scale);
+			cv::equalizeHist(recorte, recorte);
+			cv::imshow("prueba", recorte);
+			*/
 
-		 /*
-		 PXCImage::ImageData colorData;
-		 sample->depth->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_DEPTH_F32, &colorData);
-		 int height = sample->depth->QueryInfo().height;
-		 int width = sample->depth->QueryInfo().width;
-		 // image planes are in data.planes[0-3] with pitch data.pitches[0-3]
-		 QImage colorImage(colorData.planes[0], width, height, QImage::Format_RGB32);
-		 sample->color->ReleaseAccess(&colorData);
-		 ui.lImg_2->setPixmap(QPixmap::fromImage(colorImage));
-		 ui.lImg_2->setScaledContents(true);
-		 ui.lImg_2->repaint();
-		 */
+			/*
+			PXCImage::ImageData colorData;
+			sample->depth->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_DEPTH_F32, &colorData);
+			int height = sample->depth->QueryInfo().height;
+			int width = sample->depth->QueryInfo().width;
+			// image planes are in data.planes[0-3] with pitch data.pitches[0-3]
+			QImage colorImage(colorData.planes[0], width, height, QImage::Format_RGB32);
+			sample->color->ReleaseAccess(&colorData);
+			ui.lImg_2->setPixmap(QPixmap::fromImage(colorImage));
+			ui.lImg_2->setScaledContents(true);
+			ui.lImg_2->repaint();
+			*/
+			if (this->ui.rBDepth->isChecked())
+			{
+				this->showImg_1(adjMap);
+			}
+			else
+			{
+				this->showImg_1(new_img_ir);
+			}
 
-		 this->showImg_2(adjMap);
-		 delete img_depth;
+			delete img_depth;
 
-		 imgDepthToColor->Release();
-		 projection->Release();
-	 }
+			imgDepthToColor->Release();
+			projection->Release();
+		}
+	}
 
 	 /*
 	 if (sample->ir)
@@ -358,38 +320,45 @@ bool VisorRealSenseOne::showSampleAdjustColor(PXCCapture::Device *device,
 bool VisorRealSenseOne::showSampleReal(PXCCapture::Device *device,
 									const PXCCapture::Sample *sample)
 {
-	if (sample->color)
+	if (this->ui.rBRGB->isChecked())
 	{
-		cv::Mat *img = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(sample->color, img);
-		this->showImg_1(*img);
-		delete img;
+		if (sample->color)
+		{
+			cv::Mat *img = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->color, img);
+			this->showImg_1(*img);
+			delete img;
+		}
 	}
-
-	if (sample->depth)
+	else if (this->ui.rBDepth->isChecked())
 	{
-		//Se calcula la proyeccion para los puntos IR
-		cv::Mat *img_depth = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(sample->depth, img_depth);
+		if (sample->depth)
+		{
+			//Se calcula la proyeccion para los puntos IR
+			cv::Mat *img_depth = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->depth, img_depth);
 
-		double min;
-		double max;
-		cv::minMaxIdx(*img_depth, &min, &max);
-		cv::Mat adjMap;
-		float scale = 255 / (max - min);
-		img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-		cv::equalizeHist(adjMap, adjMap);
+			double min;
+			double max;
+			cv::minMaxIdx(*img_depth, &min, &max);
+			cv::Mat adjMap;
+			float scale = 255 / (max - min);
+			img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
+			cv::equalizeHist(adjMap, adjMap);
 
-		this->showImg_2(adjMap);
-		delete img_depth;
+			this->showImg_1(adjMap);
+			delete img_depth;
+		}
 	}
-
-	if (sample->ir)
+	else
 	{
-		cv::Mat *img_ir = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
-		this->showImg_3(*img_ir);
-		delete img_ir;
+		if (sample->ir)
+		{
+			cv::Mat *img_ir = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
+			this->showImg_1(*img_ir);
+			delete img_ir;
+		}
 	}
 	return true;
 }
@@ -398,44 +367,51 @@ bool VisorRealSenseOne::showSampleReal(PXCCapture::Device *device,
 bool VisorRealSenseOne::showSampleAdjustDepth(PXCCapture::Device *device,
 										  const PXCCapture::Sample *sample)
 {
-	if (sample->color)
+	if (this->ui.rBRGB->isChecked())
 	{
-		PXCProjection *projection = device->CreateProjection();
-		PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
+		if (sample->color)
+		{
+			PXCProjection *projection = device->CreateProjection();
+			PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
 
-		cv::Mat *img = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(imgColorToDepth, img);
-		this->showImg_1(*img);
-		delete img;
+			cv::Mat *img = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(imgColorToDepth, img);
+			this->showImg_1(*img);
+			delete img;
 
-		imgColorToDepth->Release();
-		projection->Release();
+			imgColorToDepth->Release();
+			projection->Release();
+		}
 	}
-
-	if (sample->depth)
+	else if (this->ui.rBDepth->isChecked())
 	{
-		//Se calcula la proyeccion para los puntos IR
-		cv::Mat *img_depth = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(sample->depth, img_depth);
+		if (sample->depth)
+		{
+			//Se calcula la proyeccion para los puntos IR
+			cv::Mat *img_depth = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->depth, img_depth);
 
-		double min;
-		double max;
-		cv::minMaxIdx(*img_depth, &min, &max);
-		cv::Mat adjMap;
-		float scale = 255 / (max - min);
-		img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-		cv::equalizeHist(adjMap, adjMap);
+			double min;
+			double max;
+			cv::minMaxIdx(*img_depth, &min, &max);
+			cv::Mat adjMap;
+			float scale = 255 / (max - min);
+			img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
+			cv::equalizeHist(adjMap, adjMap);
 
-		this->showImg_2(adjMap);
-		delete img_depth;
+			this->showImg_1(adjMap);
+			delete img_depth;
+		}
 	}
-
-	if (sample->ir)
+	else
 	{
-		cv::Mat *img_ir = new cv::Mat();
-		ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
-		this->showImg_3(*img_ir);
-		delete img_ir;
+		if (sample->ir)
+		{
+			cv::Mat *img_ir = new cv::Mat();
+			ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
+			this->showImg_1(*img_ir);
+			delete img_ir;
+		}
 	}
 
 	return true;

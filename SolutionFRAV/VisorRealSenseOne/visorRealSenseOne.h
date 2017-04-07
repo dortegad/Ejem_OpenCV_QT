@@ -46,9 +46,6 @@ private:
  	HANDLE hThreadSocket;
 
 	void showImg_1(const cv::Mat &imagen);
-	void showImg_2(const cv::Mat &imagen);
-	void showImg_3(const cv::Mat &imagen);
-	void showImg_4(const cv::Mat &imagen);
 	void createMapDepth(PXCProjection *projection,
 						PXCImage *depth,
 						std::vector<PXCPoint3DF32> &mapDepth);
