@@ -115,6 +115,7 @@ opencv_videoio320d.lib;opencv_videostab320d.lib;opencv_calib3d320d.lib;opencv_co
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Cam3D.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_visorRealSenseOne.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
     </ClCompile>
@@ -157,6 +158,7 @@ opencv_videoio320d.lib;opencv_videostab320d.lib;opencv_calib3d320d.lib;opencv_co
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Cam3D.h" />
     <ClInclude Include="GeneratedFiles\ui_visorRealSenseOne.h" />
   </ItemGroup>
   <ItemGroup>

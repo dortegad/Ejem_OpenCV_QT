@@ -10,14 +10,10 @@
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
 
-//REALSENSE
-#include "pxcsensemanager.h"
-#include "pxcmetadata.h"
-#include "util_cmdline.h"
-#include "util_render.h"
-
 //STD
 #include <conio.h>
+
+#include "Cam3D.h"
 
 
 class VisorRealSenseOne : public QMainWindow
@@ -26,39 +22,18 @@ class VisorRealSenseOne : public QMainWindow
 
 public slots:
 	int view();
-	//int record();
-	//int play();
 	void stop();
-	//void selectFile();
 
 public:
 	VisorRealSenseOne(QWidget *parent = 0);
 	~VisorRealSenseOne();
-
-	static const std::string WINNAME_RGB;
-	static const std::string WINNAME_Depth;
-	static const std::string WINNAME_IR;
-	static const std::string WINNAME_FLIR;
-
 private:
 	Ui::VisorRealSenseOneClass ui;
 	bool stopStream;
- 	HANDLE hThreadSocket;
+	Cam3D *cam;
 
-	void showImg_1(const cv::Mat &imagen);
-	void createMapDepth(PXCProjection *projection,
-						PXCImage *depth,
-						std::vector<PXCPoint3DF32> &mapDepth);
-	void ConvertPXCImageToOpenCVMat(PXCImage *inImg,
-									cv::Mat *outImg);
-	bool showSampleAdjustColor(PXCCapture::Device *device,
-							  const PXCCapture::Sample *sample);
-	bool showSampleReal(PXCCapture::Device *device,
-						const PXCCapture::Sample *sample);
-	bool showSampleAdjustDepth(PXCCapture::Device *device,
-							   const PXCCapture::Sample *sample);
-	PXCSenseManager *setup();
-	int stream(PXCSenseManager *pp);
+	void showImg(const cv::Mat &imagen);
+	int stream();
 };
 
 #endif // EJEM_OPENCV_QT_H
