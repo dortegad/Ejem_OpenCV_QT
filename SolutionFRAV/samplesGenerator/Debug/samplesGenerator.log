@@ -1,0 +1,14 @@
+﻿Build started 18/04/2017 19:37:33.
+     1>Project "D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\samplesGenerator\samplesGenerator.vcxproj" on node 2 (Build target(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\opencv-3.2.0\build\install\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\samplesGenerator.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt samplesGenerator.cpp
+         samplesGenerator.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Debug\samplesGenerator.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\opencv-3.2.0\build\install\x86\vc12\lib" opencv_calib3d320d.lib opencv_core320d.lib opencv_features2d320d.lib opencv_flann320d.lib opencv_highgui320d.lib opencv_imgcodecs320d.lib opencv_imgproc320d.lib opencv_ml320d.lib opencv_objdetect320d.lib opencv_photo320d.lib opencv_shape320d.lib opencv_stitching320d.lib opencv_superres320d.lib opencv_video320d.lib opencv_videoio320d.lib opencv_videostab320d.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Debug\samplesGenerator.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Debug\samplesGenerator.lib" /MACHINE:X86 Debug\samplesGenerator.obj
+         Debug\stdafx.obj
+         samplesGenerator.vcxproj -> D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Debug\samplesGenerator.exe
+     1>Done Building Project "D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\samplesGenerator\samplesGenerator.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:01.20
