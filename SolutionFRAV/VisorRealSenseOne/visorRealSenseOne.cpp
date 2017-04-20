@@ -38,7 +38,7 @@ void VisorRealSenseOne::showImg(const cv::Mat &imagen)
 	else
 		cv::destroyWindow("RealSize");
 
-	cv::Mat imgMostrar;
+	cv::Mat imgMostrar = imagen;
 	if (imagen.type() == CV_8UC1)
 		cv::cvtColor(imagen, imgMostrar, cv::COLOR_GRAY2RGB);
 	else

@@ -6,16 +6,22 @@
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
 
+#define DLIB_JPEG_SUPPORT
+
+
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 
+#include <util_faces.h>
+
+
 //------------------------------------------------------------------------------
 void readFiles(const std::string &fileImgs,
-				std::vector<std::string> filesDepth,
-				std::vector<std::string> filesRGB, 
-				std::vector<std::string> filesIR)
+				std::vector<std::string> &filesDepth,
+				std::vector<std::string> &filesRGB, 
+				std::vector<std::string> &filesIR)
 {
 	std::ifstream imgsFile;
 	imgsFile.open(fileImgs.c_str());
@@ -56,7 +62,6 @@ void readFiles(const std::string &fileImgs,
 //------------------------------------------------------------------------------
 int _tmain(int argc, _TCHAR* argv[])
 {
-	
 	std::string fileImgs = "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::vector<std::string> filesDepth;
 	std::vector<std::string> filesRGB;
@@ -64,9 +69,27 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	readFiles(fileImgs, filesDepth, filesRGB, filesIR);
 
-	cv::Mat img = cv::imread("d:\\prueba.jpg");
-	cv::imshow("imagen", img);
-	cv::waitKey();
+	Util_Faces::init();
+
+	int numFiles = filesDepth.size();
+	for (int i = 0; i < numFiles; i++)
+	{
+		std::string fileDepth = filesDepth[i];
+		std::string fileRGB = filesRGB[i];
+			
+		cv::Mat img = cv::imread(fileRGB);
+
+		cv::Rect rectFace;
+		if (!Util_Faces::detectFace(img, rectFace))
+			continue;
+
+		img = img(rectFace);
+
+		cv::imshow("imagen", img);
+		cv::waitKey();
+	}
+
+	
 	return 0;
 }
 

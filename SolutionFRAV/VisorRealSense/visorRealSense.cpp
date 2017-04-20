@@ -465,10 +465,14 @@ PXCSenseManager * VisorRealSense::setup()
 	//cm->SetFileName(cmdl.m_recordedFile, cmdl.m_bRecord);
 	//if (cmdl.m_sdname)
 	//cm->FilterByDeviceInfo(cmdl.m_sdname, 0, 0);
-
+	/*
 	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 640, 480, 30.0F);
 	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480, 30.0F);
 	pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480, 30.0F);
+	*/
+	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 1920, 1080);// , 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480);// , 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480);// , 30.0F);
 
 	return pp;
 }

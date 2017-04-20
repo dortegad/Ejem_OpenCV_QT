@@ -36,10 +36,13 @@ int Cam3D::init()
 	//cm->SetFileName(cmdl.m_recordedFile, cmdl.m_bRecord);
 	//if (cmdl.m_sdname)
 	//cm->FilterByDeviceInfo(cmdl.m_sdname, 0, 0);
+	
+	int ancho = 640; //640  1920;
+	int alto = 480; //480 1080;
 
-	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 640, 480, 30.0F);
-	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480, 30.0F);
-	pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480, 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 1920, 1080);// , 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480);// , 30.0F);
+	pp->EnableStream(PXCCapture::STREAM_TYPE_DEPTH, 640, 480);// , 30.0F);
 
 	if (pp == NULL)
 		return -1;
@@ -217,6 +220,7 @@ cv::Mat Cam3D::captureAdjustColor(PXCCapture::Device *device,
 		{
 			PXCProjection *projection = device->CreateProjection();
 
+			/*
 			//Se calcula la proyeccion para los puntos IR
 			cv::Mat *img_ir = new cv::Mat();
 			this->convertPXCImageToOpenCVMat(sample->ir, img_ir);
@@ -237,6 +241,7 @@ cv::Mat Cam3D::captureAdjustColor(PXCCapture::Device *device,
 						new_img_ir(ccords[i].y, ccords[i].x) = img_ir->at<uchar>(mapDepth[i].y, mapDepth[i].x);
 				}
 			}
+			*/
 
 			PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
 			cv::Mat *img_depth = new cv::Mat();
@@ -270,8 +275,8 @@ cv::Mat Cam3D::captureAdjustColor(PXCCapture::Device *device,
 
 			if (imgType == DEPTH)
 				cvSample = adjMap.clone();
-			else
-				cvSample = new_img_ir.clone();
+			//else
+			//	cvSample = new_img_ir.clone();
 
 			delete img_depth;
 
