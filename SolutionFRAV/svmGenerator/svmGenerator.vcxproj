@@ -97,6 +97,7 @@
     <ClCompile Include="..\common\util_fravAttack.cpp" />
     <ClCompile Include="..\common\util_LBP_CV.cpp" />
     <ClCompile Include="..\common\util_LBP_Dlib.cpp" />
+    <ClCompile Include="..\common\util_SVM.cpp" />
     <ClCompile Include="svmGenerator.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
