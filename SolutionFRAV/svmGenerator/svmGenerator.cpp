@@ -16,6 +16,7 @@
 #include <util_LBP_Dlib.h>
 #include <util_LBP_CV.h>
 #include <util_files.h>
+#include <util_fravAttack.h>
 
 
 //------------------------------------------------------------------------------
@@ -65,7 +66,35 @@ void readFiles(const std::string &fileImgs,
 int _tmain(int argc, _TCHAR* argv[])
 {
 	std::vector <std::string> files;
-	Util_Files::filesDIR("E:\\DB_FINAL\\RS\\VISIBLE\\RGB_ANALIS_LBP\\DESCRIPTORS\\" , files);
+	Util_Files::filesDIR("D:\\DESCRIPTORS_PRUEBA\\" , files);
+
+	std::vector<std::string> filesAttack_00;
+	int numFilesAttack_00 = Util_FravAttack::filesAttack(files, "00", filesAttack_00);
+
+	std::vector<std::string> filesAttack_04;
+	int numFilesAttack_04 = Util_FravAttack::filesAttack(files, "04", filesAttack_04);
+
+	cv::Mat_<double> matSampleS;
+	for (std::vector<std::string>::iterator it = filesAttack_00.begin(); it != filesAttack_00.end(); it++)
+	{
+		cv::Mat matSample;
+		std::string fileSample = *it;
+		cv::FileStorage fs2(fileSample, cv::FileStorage::READ);
+		fs2["descriptor"] >> matSample;
+		fs2.release();
+
+		if (matSampleS.rows == 0)
+			matSampleS = matSample;
+		else
+			cv::vconcat(matSampleS, matSample, matSampleS);
+
+		//std::cout << matSample << std::endl;
+	}
+
+	std::getchar();
+
+	
+
 
 	/*
 	std::string fileImgs = "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
