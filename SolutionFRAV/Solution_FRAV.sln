@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "VisorRealSenseOne", "VisorR
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "samplesGenerator", "samplesGenerator\samplesGenerator.vcxproj", "{B9827777-B54E-4759-B650-377D2F2E4447}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "svmGenerator", "svmGenerator\svmGenerator.vcxproj", "{608A48FB-11E3-4003-AD35-A0B77E477E8C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -27,6 +29,10 @@ Global
 		{B9827777-B54E-4759-B650-377D2F2E4447}.Debug|Win32.Build.0 = Debug|Win32
 		{B9827777-B54E-4759-B650-377D2F2E4447}.Release|Win32.ActiveCfg = Release|Win32
 		{B9827777-B54E-4759-B650-377D2F2E4447}.Release|Win32.Build.0 = Release|Win32
+		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Debug|Win32.Build.0 = Debug|Win32
+		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Release|Win32.ActiveCfg = Release|Win32
+		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
