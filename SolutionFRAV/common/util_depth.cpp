@@ -34,8 +34,8 @@ void Util_Depth::normalize(cv::Mat &depthImage, cv::Mat &depthNorImg)
 	cv::Scalar mean;
 	cv::Scalar stddev;
 	cv::meanStdDev(cleanDepth, mean, stddev);
-	double cleanMin = mean.val[0] - 4 * stddev.val[0];
-	double cleanMax = mean.val[0] + 4 * stddev.val[0];
+	double cleanMin = mean.val[0] - 1.5 * stddev.val[0];
+	double cleanMax = mean.val[0] + 1.5 * stddev.val[0];
 	//std::cout << cleanMax << "-" << cleanMin << std::endl;
 	for (int col = 0; col < depthImage.cols; col++)
 	{
@@ -54,4 +54,12 @@ void Util_Depth::normalize(cv::Mat &depthImage, cv::Mat &depthNorImg)
 	}
 
 	depthNorImg = depthNorm;
+
+	/* PARA VER LA IMAGEN NORMALIZADA
+	cv::Mat depthGrayNormalicedFace;
+	depthNorImg.convertTo(depthGrayNormalicedFace, CV_8UC1);
+	cv::equalizeHist(depthGrayNormalicedFace, depthGrayNormalicedFace);
+	cv::imshow("imagenDepth", depthGrayNormalicedFace);
+	cv::waitKey();
+	*/
 }

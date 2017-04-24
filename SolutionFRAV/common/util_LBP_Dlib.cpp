@@ -5,6 +5,8 @@
 #include <dlib/image_io.h>
 #include <dlib/opencv.h>
 
+#include "util_depth.h"
+
 //------------------------------------------------------------------------------
 int Util_LBP_Dlib::LBP_RGB(cv::Mat &img, cv::Mat_<double> &features)
 {
@@ -23,8 +25,11 @@ int Util_LBP_Dlib::LBP_RGB(cv::Mat &img, cv::Mat_<double> &features)
 //------------------------------------------------------------------------------
 int Util_LBP_Dlib::LBP_Depth(cv::Mat &imgDepth, cv::Mat_<double> &features)
 {
+	cv::Mat_<double> imgDepthNorm;
+	Util_Depth::normalize(imgDepth, imgDepthNorm);
+
 	dlib::array2d<double> depthFace;
-	dlib::assign_image(depthFace, dlib::cv_image<double>(imgDepth));
+	dlib::assign_image(depthFace, dlib::cv_image<double>(imgDepthNorm));
 	std::vector<double> featuresDepthLBP;
 	dlib::extract_uniform_lbp_descriptors<dlib::array2d<double>, double>(depthFace, featuresDepthLBP);
 
