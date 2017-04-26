@@ -12,7 +12,24 @@ public: static void filesDIR(std::vector<std::string> &sampleFileS,
 							cv::Mat &data, 
 							cv::Mat &labelS);
 
-public: static void balance(std::vector<std::string> &filesA, 
+public: static int balance(std::vector<std::string> &filesA, 
 							std::vector<std::string> &filesB);
+
+
+public: static bool groupTestTrain(const std::vector<std::string> &filesA,
+								   const std::vector<std::string> &filesB,
+									std::vector<std::string> &filesA_train,
+									std::vector<std::string> &filesA_test,
+									std::vector<std::string> &filesB_train,
+									std::vector<std::string> &filesB_test);
+
+public: static void Util_SVM::train(std::vector<std::string> &files_classA_train,
+									std::vector<std::string> &files_classB_train,
+									const std::string &svmFile);
+
+public: static void Util_SVM::test(std::vector<std::string> &files_classA_test,
+									std::vector<std::string> &files_classB_test,
+									const std::string &svmFile,
+									const std::string &resultFile);
 };
 
