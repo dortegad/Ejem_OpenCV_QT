@@ -22,106 +22,75 @@
 #include <sstream>
 #include <string>
 
+
 #include <util_faces.h>
 #include <util_depth.h>
 #include <util_LBP_Dlib.h>
 #include <util_LBP_CV.h>
-
+#include <util_fravAttack.h>
 
 //------------------------------------------------------------------------------
-void readFiles(const std::string &fileImgs,
-				std::vector<std::string> &filesDepth,
-				std::vector<std::string> &filesRGB, 
-				std::vector<std::string> &filesIR)
+bool sample(cv::Mat &imgRGB, 
+			cv::Mat &imgDepth, 
+			cv::Mat_<double> &features)
 {
-	std::ifstream imgsFile;
-	imgsFile.open(fileImgs.c_str());
+	cv::Rect rectFace;
+	if (!Util_Faces::detectFace(imgRGB, rectFace))
+		return false;
 
-	filesDepth.clear();
-	filesRGB.clear();
-	filesIR.clear();
+	imgRGB = imgRGB(rectFace);
+	cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
 
-	while (imgsFile.good())
-	{
-		std::string sSamples;
-		if (getline(imgsFile, sSamples))
-		{
-			std::stringstream line;
-			line << sSamples.c_str();
+	imgDepth = imgDepth(rectFace);
+	cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
 
-			std::string fileDepth;
-			getline(line, fileDepth, ';');
-			std::string fileRGB;
-			getline(line, fileRGB, ';');
-			std::string fileIR;
-			getline(line, fileIR, ';');
+	/*
+	Util_LBP_Dlib::LBP_RGB(imgRGB, features);
+	*/
 
-			std::cout << fileDepth.c_str() << std::endl;
-			std::cout << fileRGB.c_str() << std::endl;
-			std::cout << fileIR.c_str() << std::endl;
-			std::cout << std::endl;
+	Util_LBP_Dlib::LBP_Depth(imgDepth, features);
 
-			filesDepth.push_back(fileDepth);
-			filesRGB.push_back(fileRGB);
-			filesIR.push_back(fileIR);
-		}
-	}
+	/*
+	Util_LBP_CV::LBP_RGB(imgRGB, features);
+	*/
 
-	imgsFile.close();
+	/*
+	Util_LBP_CV::LBP_Depth(imgDepth, features);
+	*/
+
+	return true;
 }
 
 //------------------------------------------------------------------------------
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char *argv[])
 {
 	std::string fileImgs = "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+
 	std::vector<std::string> filesDepth;
 	std::vector<std::string> filesRGB;
 	std::vector<std::string> filesIR;
-
-	readFiles(fileImgs, filesDepth, filesRGB, filesIR);
+	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, filesDepth, filesRGB, filesIR);
 
 	Util_Faces::init();
 
-	int numFiles = filesDepth.size();
 	for (int i = 0; i < numFiles; i++)
 	{
 		std::string fileRGB = filesRGB[i];
 			
-		cv::Mat img = cv::imread(fileRGB);
-
-		cv::Rect rectFace;
-		if (!Util_Faces::detectFace(img, rectFace))
-			continue;
-
-		img = img(rectFace);
-		cv::resize(img, img, cv::Size(100, 100));
+		cv::Mat imgRGB = cv::imread(fileRGB);
 
 		cv::Mat imgDepth;
 		std::string fileDepth = filesDepth[i];
 		cv::FileStorage fs2(fileDepth, cv::FileStorage::READ);
 		fs2["imgfaceDepth"] >> imgDepth;
 		fs2.release();
-		imgDepth = imgDepth(rectFace);
-		cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
 
-		/*
-		cv::Mat_<double> featuresLBP_RGB;
-		Util_LBP_Dlib::LBP_RGB(img, featuresLBP_RGB);
-		*/
-
-		cv::Mat_<double> featuresLBP_Depth;
-		Util_LBP_Dlib::LBP_Depth(imgDepth, featuresLBP_Depth);
-
-		/*
-		cv::Mat_<double> featuresLBP_RGB;
-		Util_LBP_CV::LBP_RGB(img, featuresLBP_RGB);
-		*/
-
-		/*
-		cv::Mat_<double> featuresLBP_Depth;
-		Util_LBP_CV::LBP_Depth(imgDepth, featuresLBP_Depth);
-		*/
+		cv::Mat_<double> features;
+		if (sample(imgRGB, imgDepth, features))
+			std::cout << features << std::endl;
 	}
+
+	std::getchar();
 
 	return 0;
 }

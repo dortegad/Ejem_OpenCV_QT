@@ -38,9 +38,12 @@ void trainTestSVM(std::vector<std::string> &files00, std::vector<std::string> &f
 }
 
 //------------------------------------------------------------------------------
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char *argv[])
 {
-	std::string descriptorDIR = "D:\\DESCRIPTORS_PRUEBA\\";
+	if (argc < 2)
+		return 0;
+
+	std::string descriptorDIR = argv[1];// "D:\\DESCRIPTORS_PRUEBA\\";
 	std::vector <std::string> files;
 
 	Util_Files::filesDIR(descriptorDIR, files);
