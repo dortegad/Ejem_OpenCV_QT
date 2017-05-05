@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "samplesGenerator", "samples
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "svmGenerator", "svmGenerator\svmGenerator.vcxproj", "{608A48FB-11E3-4003-AD35-A0B77E477E8C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "attack_viewer_F200", "attack_viewer_F200\attack_viewer_F200.vcxproj", "{3BA3A1E7-2005-444D-A6EF-734175C59E12}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -33,6 +35,10 @@ Global
 		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Debug|Win32.Build.0 = Debug|Win32
 		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Release|Win32.ActiveCfg = Release|Win32
 		{608A48FB-11E3-4003-AD35-A0B77E477E8C}.Release|Win32.Build.0 = Release|Win32
+		{3BA3A1E7-2005-444D-A6EF-734175C59E12}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3BA3A1E7-2005-444D-A6EF-734175C59E12}.Debug|Win32.Build.0 = Debug|Win32
+		{3BA3A1E7-2005-444D-A6EF-734175C59E12}.Release|Win32.ActiveCfg = Release|Win32
+		{3BA3A1E7-2005-444D-A6EF-734175C59E12}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

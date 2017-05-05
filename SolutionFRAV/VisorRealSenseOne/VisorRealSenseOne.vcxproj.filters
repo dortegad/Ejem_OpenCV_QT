@@ -50,7 +50,7 @@
     <ClCompile Include="GeneratedFiles\Release\moc_visorRealSenseOne.cpp">
       <Filter>Generated Files\Release</Filter>
     </ClCompile>
-    <ClCompile Include="Cam3D.cpp">
+    <ClCompile Include="..\common\Cam3D.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
