@@ -15,8 +15,6 @@ int main(int argc, char* argv[])
 	if (cam.init() != 0)
 		return 0;
 
-
-
 	int frame = 0;
 	for (;; frame++)
 	{

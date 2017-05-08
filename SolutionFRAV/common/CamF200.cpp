@@ -151,178 +151,25 @@ void CamF200::convertPXCImageToOpenCVMat(PXCImage *inImg,
 }
 
 //---------------------------------------------------------------------------------------
-void CamF200::createMapDepth(PXCProjection *projection,
-							PXCImage *depth,
-							std::vector<PXCPoint3DF32> &mapDepth)
-{
-	PXCImage::ImageData ddata;
-	if (PXC_STATUS_NO_ERROR > depth->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_DEPTH, &ddata))
-		return;
-
-	float dwidth = (float)depth->QueryInfo().width;
-	float dheight = (float)depth->QueryInfo().height;
-	int imgSize = dwidth*dheight;
-
-	PXCPointF32 *uvmap = new PXCPointF32[imgSize];
-	projection->QueryInvUVMap(depth, uvmap);
-	for (int i = 0; i < imgSize; i++)
-	{
-		if (uvmap[i].x < 0)
-			continue;
-		PXCPoint3DF32 point;
-		point.x = uvmap[i].x * dwidth;
-		point.y = uvmap[i].y * dheight;
-		if ((point.x < dwidth) && (point.y < dheight) && (point.x > 0) && (point.y > 0))
-		{
-			//std::cout << (int)point.x << " - " << (int)point.y << std::endl;
-			point.z = (float)(((pxcI16*)(ddata.planes[0] + (int)point.y * ddata.pitches[0]))[(int)point.x]);
-			mapDepth.push_back(point);
-		}
-	}
-	depth->ReleaseAccess(&ddata);
-	delete uvmap;
-
-	/*
-	int dsize = dcords.size();
-	PXCPoint3DF32 invP3D = { -1.f, -1.f, 0.f };
-	std::vector<PXCPoint3DF32> dcordsAbs(dsize, invP3D);
-
-
-	for (int i = 0; i < dsize; i++) {
-	if (dcords[i].x < 0)
-	continue;
-	dcordsAbs[i].x = dcords[i].x * dwidth;
-	dcordsAbs[i].y = dcords[i].y * dheight;
-	dcordsAbs[i].z = (float)(((pxcI16*)(ddata.planes[0] + (int)dcordsAbs[i].y * ddata.pitches[0]))[(int)dcordsAbs[i].x]);
-	}
-	depth->ReleaseAccess(&ddata);
-	mapDepth = dcordsAbs;
-	*/
-}
-
-//---------------------------------------------------------------------------------------
 cv::Mat CamF200::captureAdjustColor(PXCCapture::Device *device,
 									const PXCCapture::Sample *sample,
 									ImgType imgType)
 {
-	//if (sample) {
-	//if (sample->depth && !renderd.RenderFrame(sample->depth)) break;
-	//if (sample->color && !renderc.RenderFrame(sample->color)) break;
-	//if (sample->ir    && !renderi.RenderFrame(sample->ir))    break;
-	//if (sample->right    && !renderr.RenderFrame(sample->right)) break;
-	//if (sample->left    && !renderl.RenderFrame(sample->left)) break;
-	//}
-
 	cv::Mat cvSample;
-	if (imgType == RGB)
+	if (sample->depth)
 	{
-		if (sample->color)
-		{
-			//PXCProjection *projection = device->CreateProjection();
-			//PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
+		PXCProjection *projection = device->CreateProjection();
 
-			cv::Mat *img = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->color, img);
-			cvSample = img->clone();
-			delete img;
+		PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
+		cv::Mat *img_depth = new cv::Mat();
+		this->convertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
 
-			//imgColorToDepth->Release();
-			//projection->Release();
-		}
+		//delete img_depth;
+		cvSample = img_depth->clone();
+
+		imgDepthToColor->Release();
+		projection->Release();
 	}
-	else
-	{
-		if (sample->depth)
-		{
-			PXCProjection *projection = device->CreateProjection();
-
-			/*
-			//Se calcula la proyeccion para los puntos IR
-			cv::Mat *img_ir = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->ir, img_ir);
-			cv::Mat_<uchar> new_img_ir = cv::Mat::zeros(img_ir->rows, img_ir->cols, img_ir->type());
-
-			std::vector<PXCPoint3DF32> mapDepth;
-			this->createMapDepth(projection, sample->depth, mapDepth);
-			if (mapDepth.size() > 0)
-			{
-				std::vector<PXCPointF32> ccords;
-				PXCPointF32 invP = { -1.f, -1.f };
-				ccords.resize(mapDepth.size(), invP);
-				projection->MapDepthToColor(mapDepth.size(), &mapDepth[0], &ccords[0]);
-
-				for (unsigned int i = 0; i < ccords.size(); i++)
-				{
-					if ((ccords[i].y > 0) && (ccords[i].x > 0) && (ccords[i].y < img_ir->rows) && (ccords[i].x < img_ir->cols))
-						new_img_ir(ccords[i].y, ccords[i].x) = img_ir->at<uchar>(mapDepth[i].y, mapDepth[i].x);
-				}
-			}
-			*/
-
-			PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
-			cv::Mat *img_depth = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
-
-			//double min;
-			//double max;
-			//cv::minMaxIdx(*img_depth, &min, &max);
-			//cv::Mat adjMap;
-			//float scale = 255 / (max - min);
-			//img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-			//cv::equalizeHist(adjMap, adjMap);
-
-			
-			//cv::Mat recorte = (*img_depth)(cv::Rect(100, 100, 300, 300)).clone();
-			//recorte.convertTo(recorte, CV_8UC1, scale, -min*scale);
-			//cv::equalizeHist(recorte, recorte);
-			//cv::imshow("prueba", recorte);
-
-			
-			//PXCImage::ImageData colorData;
-			//sample->depth->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_DEPTH_F32, &colorData);
-			//int height = sample->depth->QueryInfo().height;
-			//int width = sample->depth->QueryInfo().width;
-			// image planes are in data.planes[0-3] with pitch data.pitches[0-3]
-			//QImage colorImage(colorData.planes[0], width, height, QImage::Format_RGB32);
-			//sample->color->ReleaseAccess(&colorData);
-			//ui.lImg_2->setPixmap(QPixmap::fromImage(colorImage));
-			//ui.lImg_2->setScaledContents(true);
-			//ui.lImg_2->repaint();
-
-			//if (imgType == DEPTH)
-			//	cvSample = adjMap.clone();
-			//else
-			//	cvSample = new_img_ir.clone();
-
-			//delete img_depth;
-			cvSample = img_depth->clone();
-
-			imgDepthToColor->Release();
-			projection->Release();
-		}
-	}
-
-	//if (sample->ir)
-	//{
-	//cv::Mat *img_ir = new cv::Mat();
-	///ConvertPXCImageToOpenCVMat(sample->ir, img_ir);
-	//this->showImg_3(*img_ir);
-	//delete img_ir;
-	//}
-
-
-	
-	//const PXCCapture::Sample *sample = pp->QuerySample();
-	//PXCImage::ImageData colorData;
-	//sample->color->AcquireAccess(PXCImage::ACCESS_READ, PXCImage::PIXEL_FORMAT_RGB32, &colorData);
-	//int height = sample->color->QueryInfo().height;
-	//int width = sample->color->QueryInfo().width;
-	// image planes are in data.planes[0-3] with pitch data.pitches[0-3]
-	//QImage colorImage(colorData.planes[0], width, height, QImage::Format_RGB32);
-	//sample->color->ReleaseAccess(&colorData);
-	//ui.lImg->setPixmap(QPixmap::fromImage(colorImage));
-	//ui.lImg->setScaledContents(true);
-	//ui.lImg->repaint();
 
 	return cvSample;
 }
@@ -377,112 +224,7 @@ cv::Mat CamF200::captureReal(PXCCapture::Device *device,
 	return cvSample;
 }
 
-//---------------------------------------------------------------------------------------
-cv::Mat CamF200::captureAdjustDepth(PXCCapture::Device *device,
-								const PXCCapture::Sample *sample,
-								ImgType imgType)
-{
-	cv::Mat cvSample;
-	if (imgType == RGB)
-	{
-		if (sample->color)
-		{
-			PXCProjection *projection = device->CreateProjection();
-			PXCImage *imgColorToDepth = projection->CreateColorImageMappedToDepth(sample->depth, sample->color);
 
-			cv::Mat *img = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(imgColorToDepth, img);
-			//this->showImg_1(*img);
-			cvSample = img->clone();
-			delete img;
-
-			imgColorToDepth->Release();
-			projection->Release();
-		}
-	}
-	else if (imgType == DEPTH)
-	{
-		if (sample->depth)
-		{
-			//Se calcula la proyeccion para los puntos IR
-			cv::Mat *img_depth = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->depth, img_depth);
-
-			double min;
-			double max;
-			cv::minMaxIdx(*img_depth, &min, &max);
-			cv::Mat adjMap;
-			float scale = 255 / (max - min);
-			img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-			cv::equalizeHist(adjMap, adjMap);
-
-			//this->showImg_1(adjMap);
-			cvSample = img_depth->clone();
-			delete img_depth;
-		}
-	}
-	else
-	{
-		if (sample->ir)
-		{
-			cv::Mat *img_ir = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->ir, img_ir);
-			//this->showImg_1(*img_ir);
-			cvSample = img_ir->clone();
-			delete img_ir;
-		}
-	}
-
-	return cvSample;
-}
-
-
-//---------------------------------------------------------------------------------------
-cv::Mat CamF200::capture(ImgType imgType,
-				   ImgAdjustType imgAdjustType)
-{
-	// Reset all properties
-	PXCCapture::Device *device = pp->QueryCaptureManager()->QueryDevice();
-	device->ResetProperties(PXCCapture::STREAM_TYPE_ANY);
-
-	////Set mirror mode
-	//if (cmdl.m_bMirror)
-	//device->SetMirrorMode(PXCCapture::Device::MirrorMode::MIRROR_MODE_HORIZONTAL);
-	//else
-	//device->SetMirrorMode(PXCCapture::Device::MirrorMode::MIRROR_MODE_DISABLED);
-
-
-	//Waits until new frame is available and locks it for application processing 
-	pxcStatus sts;
-	sts = pp->AcquireFrame(true);
-	//std::cout << sts << std::endl;
-
-	if (sts<PXC_STATUS_NO_ERROR) {
-		if (sts == PXC_STATUS_STREAM_CONFIG_CHANGED) {
-			wprintf_s(L"Stream configuration was changed, re-initilizing\n");
-			pp->Close();
-		}
-		//return -1;
-	}
-
-	//Render streams, unless -noRender is selected
-	const PXCCapture::Sample *sample = pp->QuerySample();
-
-	cv::Mat cvSample;
-	if (imgAdjustType == REAL)
-		cvSample = this->captureReal(device, sample, imgType);
-	else if (imgAdjustType == ADJUST_DEPTH)
-		cvSample = this->captureAdjustDepth(device, sample, imgType);
-	else if (imgAdjustType == ADJUST_RGB)
-		cvSample = this->captureAdjustColor(device, sample, imgType);
-
-	//Releases lock so pipeline can process next frame 
-	pp->ReleaseFrame();
-
-	//wprintf_s(L"Exiting\n");
-
-	return cvSample;
-}
 
 //---------------------------------------------------------------------------------------
 void CamF200::capture(cv::Mat &frameRGB, cv::Mat &frameDepth)

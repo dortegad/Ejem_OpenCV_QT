@@ -24,28 +24,19 @@ private:
 	PXCSenseManager *pp;
 	PXCCapture::Device *device;
 	void convertPXCImageToOpenCVMat(PXCImage *inImg, cv::Mat *outImg);
-	void createMapDepth(PXCProjection *projection,
-						PXCImage *depth,
-						std::vector<PXCPoint3DF32> &mapDepth);
 	cv::Mat captureAdjustColor(PXCCapture::Device *device, 
 								const PXCCapture::Sample *sample, 
 								ImgType imgType = RGB);
 	cv::Mat captureReal(PXCCapture::Device *device, 
 						const PXCCapture::Sample *sample, 
 						ImgType imgType = RGB);
-	cv::Mat captureAdjustDepth(PXCCapture::Device *device, 
-							const PXCCapture::Sample *sample,
-							ImgType imgType = RGB);
 
-
+	void capture(cv::Mat & frameRGB, cv::Mat &frameDepth);
 public:
 	CamF200();
 	~CamF200();
 	int init();
 	int isAttack();
 	int stop();
-
-	void capture(cv::Mat & frameRGB, cv::Mat &frameDepth);
-	cv::Mat capture(ImgType imgType = RGB, ImgAdjustType imgAdjustType = ADJUST_RGB);
 };
 
