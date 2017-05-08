@@ -152,8 +152,7 @@ void CamF200::convertPXCImageToOpenCVMat(PXCImage *inImg,
 
 //---------------------------------------------------------------------------------------
 cv::Mat CamF200::captureAdjustColor(PXCCapture::Device *device,
-									const PXCCapture::Sample *sample,
-									ImgType imgType)
+									const PXCCapture::Sample *sample)
 {
 	cv::Mat cvSample;
 	if (sample->depth)
@@ -174,57 +173,17 @@ cv::Mat CamF200::captureAdjustColor(PXCCapture::Device *device,
 	return cvSample;
 }
 
-
 //---------------------------------------------------------------------------------------
 cv::Mat CamF200::captureReal(PXCCapture::Device *device,
-						  const PXCCapture::Sample *sample,
-						  ImgType imgType)
+						  const PXCCapture::Sample *sample)
 {
 	cv::Mat cvSample;
-	if (imgType == RGB)
-	{
-		if (sample->color)
-		{
-			cv::Mat *img = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->color, img);
-			cvSample = img->clone();
-			delete img;
-		}
-	}
-	else if (imgType == DEPTH)
-	{
-		if (sample->depth)
-		{
-			//Se calcula la proyeccion para los puntos IR
-			cv::Mat *img_depth = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->depth, img_depth);
-
-			double min;
-			double max;
-			cv::minMaxIdx(*img_depth, &min, &max);
-			cv::Mat adjMap;
-			float scale = 255 / (max - min);
-			img_depth->convertTo(adjMap, CV_8UC1, scale, -min*scale);
-			cv::equalizeHist(adjMap, adjMap);
-
-			cvSample = adjMap.clone();
-			delete img_depth;
-		}
-	}
-	else
-	{
-		if (sample->ir)
-		{
-			cv::Mat *img_ir = new cv::Mat();
-			this->convertPXCImageToOpenCVMat(sample->ir, img_ir);
-			cvSample = img_ir->clone();
-			delete img_ir;
-		}
-	}
+	cv::Mat *img = new cv::Mat();
+	this->convertPXCImageToOpenCVMat(sample->color, img);
+	cvSample = img->clone();
+	delete img;
 	return cvSample;
 }
-
-
 
 //---------------------------------------------------------------------------------------
 void CamF200::capture(cv::Mat &frameRGB, cv::Mat &frameDepth)
@@ -247,8 +206,8 @@ void CamF200::capture(cv::Mat &frameRGB, cv::Mat &frameDepth)
 	//Render streams, unless -noRender is selected
 	const PXCCapture::Sample *sample = pp->QuerySample();
 
-	frameRGB = this->captureReal(device, sample, RGB);
-	frameDepth = this->captureAdjustColor(device, sample, DEPTH);
+	frameRGB = this->captureReal(device, sample);
+	frameDepth = this->captureAdjustColor(device, sample);
 
 	//Releases lock so pipeline can process next frame 
 	pp->ReleaseFrame();

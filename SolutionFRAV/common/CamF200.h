@@ -12,9 +12,6 @@
 #include "opencv2\imgproc\imgproc.hpp"
 #include "opencv2\ml\ml.hpp"
 
-enum ImgType { RGB, DEPTH, IR };
-enum ImgAdjustType { REAL, ADJUST_RGB, ADJUST_DEPTH };
-
 class CamF200
 {
 private:
@@ -25,11 +22,9 @@ private:
 	PXCCapture::Device *device;
 	void convertPXCImageToOpenCVMat(PXCImage *inImg, cv::Mat *outImg);
 	cv::Mat captureAdjustColor(PXCCapture::Device *device, 
-								const PXCCapture::Sample *sample, 
-								ImgType imgType = RGB);
+								const PXCCapture::Sample *sample);
 	cv::Mat captureReal(PXCCapture::Device *device, 
-						const PXCCapture::Sample *sample, 
-						ImgType imgType = RGB);
+						const PXCCapture::Sample *sample);
 
 	void capture(cv::Mat & frameRGB, cv::Mat &frameDepth);
 public:
