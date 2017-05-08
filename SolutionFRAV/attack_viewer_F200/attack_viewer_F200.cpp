@@ -6,22 +6,23 @@
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
 
-
-#include "Cam3D.h"
+#include "CamF200.h"
 
 int main(int argc, char* argv[])
 {
-	Cam3D cam;
+	CamF200 cam;
 
 	if (cam.init() != 0)
 		return 0;
+
+
 
 	int frame = 0;
 	for (;; frame++)
 	{
 		cam.isAttack();
 
-		cv::waitKey(30);
+		cv::waitKey(1);
 	}
 
 	cam.stop();
