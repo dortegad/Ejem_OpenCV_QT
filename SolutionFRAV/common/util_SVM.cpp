@@ -5,6 +5,10 @@
 
 #include "opencv2\ml\ml.hpp"
 
+#include <iostream>
+#include <sstream>
+#include <string>
+
 //------------------------------------------------------------------------------
 void Util_SVM::filesDIR(std::vector<std::string> &sampleFileS, 
 						int label, 
@@ -45,7 +49,17 @@ int Util_SVM::balance(std::vector<std::string> &filesA, std::vector<std::string>
 	int numFilesA = filesA.size();
 	int numFilesB = filesB.size();
 
-	if (numFilesA > numFilesB)
+	int MAXIMO = 3000;
+	if ((numFilesA > MAXIMO) && (numFilesB > MAXIMO))
+	{
+		std::vector<std::string> newFilesA(filesA.begin(), filesA.begin() + MAXIMO);
+		filesA = newFilesA;
+		
+		std::vector<std::string> newFilesB(filesB.begin(), filesB.begin() + MAXIMO);
+		filesB = newFilesB;
+		return newFilesB.size();
+	}
+	else if (numFilesA > numFilesB)
 	{
 		std::vector<std::string> newFilesA(filesA.begin(), filesA.begin() + numFilesB);
 		filesA = newFilesA;
@@ -98,10 +112,16 @@ void Util_SVM::train(std::vector<std::string> &files_classA_train,
 	cv::Mat labelS_B;
 	Util_SVM::filesDIR(files_classB_train, 1, data_B, labelS_B);
 
+	std::cout << "Files class A to train " << files_classA_train.size() << std::endl;
+	std::cout << "Files class B to train " << files_classB_train.size() << std::endl;
+
 	cv::Mat labelsMat;
 	cv::Mat dataMat;
 	cv::vconcat(labelS_A, labelS_B, labelsMat);
 	cv::vconcat(data_A, data_B, dataMat);
+
+
+	std::cout << "Files to train " << files_classB_train.size() + files_classB_train.size()  << std::endl;
 
 	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::create();
 	svm->setType(cv::ml::SVM::C_SVC);
@@ -113,6 +133,8 @@ void Util_SVM::train(std::vector<std::string> &files_classA_train,
 	svm->train(tData);
 
 	svm->save(svmFile);
+
+	std::cout << "Trained " << svmFile << std::endl;
 
 	svm.release();
 }
@@ -131,10 +153,15 @@ void Util_SVM::test(std::vector<std::string> &files_classA_test,
 	cv::Mat labelS_B;
 	Util_SVM::filesDIR(files_classB_test, 1, data_B, labelS_B);
 
+	std::cout << "Files class A to test " << files_classA_test.size() << std::endl;
+	std::cout << "Files class B to test " << files_classB_test.size() << std::endl;
+
 	cv::Mat labelsMat;
 	cv::Mat dataMat;
 	cv::vconcat(labelS_A, labelS_B, labelsMat);
 	cv::vconcat(data_A, data_B, dataMat);
+
+	std::cout << "Files to test " << files_classA_test.size() + files_classB_test.size() << std::endl;
 
 	cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::load(svmFile);
 
@@ -158,4 +185,6 @@ void Util_SVM::test(std::vector<std::string> &files_classA_test,
 	labelsMat.release();
 
 	file.close();
+
+	std::cout << "End test" << std::endl;
 }
