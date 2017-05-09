@@ -20,12 +20,18 @@ int CamF200::init()
 	if (!Util_Faces::init())
 		return 0;
 
-	//svm_depth = cv::ml::SVM::load("svm_1_2_3_4_5_depth.svm");   //PROFUNDIDAD TODOS LOS ATAQUES (ENTREANDO ANTES)
-	svm_depth = cv::ml::SVM::load("svm_1_depth.svm"); // PROFUNDIDAD ATAQUE 1 (ENTRENADO ANTES)
+	svm_depth_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_01.svm");
+	svm_depth_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_02.svm");
+	svm_depth_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_03.svm");
+	svm_depth_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_04.svm");
+	svm_depth_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_05.svm");
 
-	svm_rgb = cv::ml::SVM::load("svm_attack_01.svm"); //RGB ATAQUE 1 (ENTRENADO_NUEVO)
-	//svm_rgb = cv::ml::SVM::load("svm_1_2_3_4_5_rgb.svm"); //RGB TODOS LOS ATAQUES (ENTRENADO ANTES)
-	//svm_rgb = cv::ml::SVM::load("svm_1_rgb.svm"); //RGB ATAQUE 1 (ENTRENADO ANTES)
+	svm_rgb_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_01.svm");
+	svm_rgb_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_02.svm");
+	svm_rgb_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_03.svm");
+	svm_rgb_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_04.svm");
+	svm_rgb_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_05.svm");
+
 
 	// Creates an instance of the PXCSenseManager 
 	pp = PXCSenseManager::CreateInstance();
@@ -42,15 +48,6 @@ int CamF200::init()
 		md->AttachBuffer(PXCSessionService::FEEDBACK_SAMPLE_INFO, (pxcBYTE*)sample_name, sizeof(sample_name));
 	}
 
-
-	// Sets file recording or playback
-	//PXCCaptureManager *cm = pp->QueryCaptureManager();
-	//cm->SetFileName(cmdl.m_recordedFile, cmdl.m_bRecord);
-	//if (cmdl.m_sdname)
-	//cm->FilterByDeviceInfo(cmdl.m_sdname, 0, 0);
-	
-	int ancho = 640; //640  1920;
-	int alto = 480; //480 1080;
 
 	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 1920, 1080);// , 30.0F);
 	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480);// , 30.0F);
@@ -77,7 +74,7 @@ int CamF200::init()
 
 //---------------------------------------------------------------------------------------
 void CamF200::convertPXCImageToOpenCVMat(PXCImage *inImg,
-									   cv::Mat *outImg)
+	cv::Mat *outImg)
 {
 	int cvDataType;
 	int cvDataWidth;
@@ -150,46 +147,10 @@ void CamF200::convertPXCImageToOpenCVMat(PXCImage *inImg,
 	inImg->ReleaseAccess(&data);
 }
 
-//---------------------------------------------------------------------------------------
-cv::Mat CamF200::captureAdjustColor(PXCCapture::Device *device,
-									const PXCCapture::Sample *sample)
-{
-	cv::Mat cvSample;
-	if (sample->depth)
-	{
-		PXCProjection *projection = device->CreateProjection();
-
-		PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
-		cv::Mat *img_depth = new cv::Mat();
-		this->convertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
-
-		//delete img_depth;
-		cvSample = img_depth->clone();
-
-		imgDepthToColor->Release();
-		projection->Release();
-	}
-
-	return cvSample;
-}
-
-//---------------------------------------------------------------------------------------
-cv::Mat CamF200::captureReal(PXCCapture::Device *device,
-						  const PXCCapture::Sample *sample)
-{
-	cv::Mat cvSample;
-	cv::Mat *img = new cv::Mat();
-	this->convertPXCImageToOpenCVMat(sample->color, img);
-	cvSample = img->clone();
-	delete img;
-	return cvSample;
-}
 
 //---------------------------------------------------------------------------------------
 void CamF200::capture(cv::Mat &frameRGB, cv::Mat &frameDepth)
 {
-
-
 	//Waits until new frame is available and locks it for application processing 
 	pxcStatus sts;
 	sts = pp->AcquireFrame(true);
@@ -206,11 +167,58 @@ void CamF200::capture(cv::Mat &frameRGB, cv::Mat &frameDepth)
 	//Render streams, unless -noRender is selected
 	const PXCCapture::Sample *sample = pp->QuerySample();
 
-	frameRGB = this->captureReal(device, sample);
-	frameDepth = this->captureAdjustColor(device, sample);
+	//Capturamos la imagen RGB
+	cv::Mat *img = new cv::Mat();
+	this->convertPXCImageToOpenCVMat(sample->color, img);
+	frameRGB = img->clone();
+	delete img;
+
+	//Capturamos la imagen Depth
+	if (sample->depth)
+	{
+		PXCProjection *projection = device->CreateProjection();
+
+		PXCImage *imgDepthToColor = projection->CreateDepthImageMappedToColor(sample->depth, sample->color);
+		cv::Mat *img_depth = new cv::Mat();
+		this->convertPXCImageToOpenCVMat(imgDepthToColor, img_depth);
+
+		frameDepth = img_depth->clone();
+
+		imgDepthToColor->Release();
+		projection->Release();
+		delete img_depth;
+	}
 
 	//Releases lock so pipeline can process next frame 
 	pp->ReleaseFrame();
+}
+
+
+//---------------------------------------------------------------------------------------
+float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm, 
+					  cv::Mat &features,
+					  float umbral,
+					  const std::string &msg)
+{
+	cv::Mat_<float> sampleRGB = features;
+	float result = svm->predict(sampleRGB, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
+	int preditClass = svm->predict(sampleRGB, cv::noArray());
+	float confidence = 1.0 / (1.0 + exp(-result));
+
+	std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
+	if (confidence > umbral)
+		std::cout << msg << " = BONA FIDE" << std::endl;
+	else
+		std::cout << msg << " = ATTACK" << std::endl;
+
+	/*
+	if (result > 1.5)
+		std::cout << "depth BONA FIDE" << std::endl;
+	else
+		std::cout << "depth ATTACK" << std::endl;
+		*/
+
+	return confidence;
 }
 
 //---------------------------------------------------------------------------------------
@@ -230,16 +238,11 @@ int CamF200::isAttack()
 		cv::Mat_<double> featuresRGB;
 		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
-		cv::Mat_<float> sampleRGB = featuresRGB;
-		float result = svm_rgb->predict(sampleRGB, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
-		//int preditClass = svm_rgb->predict(sampleRGB, cv::noArray());
-		//float confidence = 1.0 / (1.0 + exp(-result));
-		//std::cout << "RGB" << result << " - " << confidence << " - " << preditClass << std::endl;
-		if (result > 0.8)
-			std::cout << "rgb ATTACK" << std::endl;
-		else
-			std::cout << "rgb BONA FIDE" << std::endl;
-
+		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.8, "RGB Attack 1");
+		float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.8, "RGB Attack 2");
+		float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
+		float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
+		float score_attack_05_rgb = this->evalue(svm_rgb_attack_05, featuresRGB, 0.8, "RGB Attack 5");
 
 		cv::Mat imgFaceDepth = frameDepth(rectFace);
 		cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));
@@ -247,15 +250,11 @@ int CamF200::isAttack()
 		cv::Mat_<double> featureDepth;
 		Util_LBP_CV::LBP_Depth(imgFaceDepth, featureDepth);
 
-		cv::Mat_<float> sampleDepth = featureDepth;
-		result = svm_depth->predict(sampleDepth, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
-		//preditClass = svm_depth->predict(sampleDepth, cv::noArray());
-		//confidence = 1.0 / (1.0 + exp(-result));
-		//std::cout << "DEPTH" << result << " - " << confidence << " - " << preditClass << std::endl;
-		if (result < -2.0)
-			std::cout << "depth BONA FIDE" << std::endl;
-		else
-			std::cout << "depth ATTACK" << std::endl;
+		float score_attack_01_depth = this->evalue(svm_depth_attack_01, featureDepth, 0.7, "DEPTH Attack 1");
+		float score_attack_02_depth = this->evalue(svm_depth_attack_02, featureDepth, 0.7, "DEPTH Attack 2");
+		float score_attack_03_depth = this->evalue(svm_depth_attack_03, featureDepth, 0.7, "DEPTH Attack 3");
+		float score_attack_04_depth = this->evalue(svm_depth_attack_04, featureDepth, 0.7, "DEPTH Attack 4");
+		float score_attack_05_depth = this->evalue(svm_depth_attack_05, featureDepth, 0.7, "DEPTH Attack 5");
 	}
 
 	return 0;

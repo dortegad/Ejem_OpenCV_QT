@@ -15,18 +15,24 @@
 class CamF200
 {
 private:
-	cv::Ptr<cv::ml::SVM> svm_rgb;
-	cv::Ptr<cv::ml::SVM> svm_depth;
+	cv::Ptr<cv::ml::SVM> svm_rgb_attack_01;
+	cv::Ptr<cv::ml::SVM> svm_rgb_attack_02;
+	cv::Ptr<cv::ml::SVM> svm_rgb_attack_03;
+	cv::Ptr<cv::ml::SVM> svm_rgb_attack_04;
+	cv::Ptr<cv::ml::SVM> svm_rgb_attack_05;
+
+	cv::Ptr<cv::ml::SVM> svm_depth_attack_01;
+	cv::Ptr<cv::ml::SVM> svm_depth_attack_02;
+	cv::Ptr<cv::ml::SVM> svm_depth_attack_03;
+	cv::Ptr<cv::ml::SVM> svm_depth_attack_04;
+	cv::Ptr<cv::ml::SVM> svm_depth_attack_05;
 
 	PXCSenseManager *pp;
 	PXCCapture::Device *device;
-	void convertPXCImageToOpenCVMat(PXCImage *inImg, cv::Mat *outImg);
-	cv::Mat captureAdjustColor(PXCCapture::Device *device, 
-								const PXCCapture::Sample *sample);
-	cv::Mat captureReal(PXCCapture::Device *device, 
-						const PXCCapture::Sample *sample);
 
+	void convertPXCImageToOpenCVMat(PXCImage *inImg, cv::Mat *outImg);
 	void capture(cv::Mat & frameRGB, cv::Mat &frameDepth);
+	float evalue(cv::Ptr<cv::ml::SVM> svm, cv::Mat & features, float umbral, const std::string &msg);
 public:
 	CamF200();
 	~CamF200();
