@@ -6,7 +6,7 @@
 #include "util_depth.h"
 
 //------------------------------------------------------------------------------
-int Util_LBP_CV::LBP_RGB(cv::Mat &img, cv::Mat_<double> &features)
+int Util_LBP_CV::LBP_RGB(cv::Mat &img, cv::Mat &features)
 {	
 	cv::cvtColor(img, img, CV_BGR2GRAY);
 	std::vector<cv::Mat> images;

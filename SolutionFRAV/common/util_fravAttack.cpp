@@ -73,10 +73,10 @@ int Util_FravAttack::readSamplesFiles(const std::string &fileImgs,
 			std::string fileIR;
 			getline(line, fileIR, ';');
 
-			std::cout << fileDepth.c_str() << std::endl;
-			std::cout << fileRGB.c_str() << std::endl;
-			std::cout << fileIR.c_str() << std::endl;
-			std::cout << std::endl;
+			//std::cout << fileDepth.c_str() << std::endl;
+			//std::cout << fileRGB.c_str() << std::endl;
+			//std::cout << fileIR.c_str() << std::endl;
+			//std::cout << std::endl;
 
 			filesDepth.push_back(fileDepth);
 			filesRGB.push_back(fileRGB);
@@ -87,4 +87,19 @@ int Util_FravAttack::readSamplesFiles(const std::string &fileImgs,
 	imgsFile.close();
 
 	return filesDepth.size();
+}
+
+//------------------------------------------------------------------------------
+void Util_FravAttack::infoFile(const std::string &file,
+								std::string &user,
+								std::string &attack,
+								std::string &frame)
+{
+	user = file.substr(file.find("USER_")+5, 3);
+	attack = "00";
+	if (file.find("attack_") != std::string::npos)
+		attack = file.substr(file.find("attack_")+7, 2);
+	frame = file.substr(file.find("frame_")+6, 2);
+
+	//std::cout << user << " - " << attack << " - " << frame << std::endl;
 }

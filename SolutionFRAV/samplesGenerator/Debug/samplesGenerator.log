@@ -1,11 +1,8 @@
-﻿Build started 08/05/2017 16:03:46.
-     1>Project "D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\samplesGenerator\samplesGenerator.vcxproj" on node 3 (Build target(s)).
+﻿Build started 11/05/2017 15:03:30.
+     1>Project "D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\samplesGenerator\samplesGenerator.vcxproj" on node 2 (Build target(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\opencv-3.2.0\build\install\include" /I"C:\dlib-18.18" /ID:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\\common /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt ..\common\util_faces.cpp
-         util_faces.cpp
-     1>d:\realsense\pro\proyectos_frav\solutionfrav\common\util_faces.cpp(24): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-     1>d:\realsense\pro\proyectos_frav\solutionfrav\common\util_faces.cpp(25): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-     1>d:\realsense\pro\proyectos_frav\solutionfrav\common\util_faces.cpp(36): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+         C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\opencv-3.2.0\build\install\include" /I"C:\dlib-18.18" /ID:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\\common /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt samplesGenerator.cpp
+         samplesGenerator.cpp
        Link:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Win32\Debug\samplesGenerator.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\opencv-3.2.0\build\install\x86\vc12\lib" /LIBPATH:"C:\dlib-18.18\examples\build\dlib_build\Debug" opencv_aruco320d.lib opencv_bgsegm320d.lib opencv_bioinspired320d.lib opencv_calib3d320d.lib opencv_ccalib320d.lib opencv_core320d.lib opencv_datasets320d.lib opencv_dnn320d.lib opencv_dpm320d.lib opencv_face320d.lib opencv_features2d320d.lib opencv_flann320d.lib opencv_fuzzy320d.lib opencv_hdf320d.lib opencv_highgui320d.lib opencv_imgcodecs320d.lib opencv_imgproc320d.lib opencv_line_descriptor320d.lib opencv_ml320d.lib opencv_objdetect320d.lib opencv_optflow320d.lib opencv_phase_unwrapping320d.lib opencv_photo320d.lib opencv_plot320d.lib opencv_reg320d.lib opencv_rgbd320d.lib opencv_saliency320d.lib opencv_shape320d.lib opencv_stereo320d.lib opencv_stitching320d.lib opencv_structured_light320d.lib opencv_superres320d.lib opencv_surface_matching320d.lib opencv_text320d.lib opencv_tracking320d.lib opencv_video320d.lib opencv_videoio320d.lib opencv_videostab320d.lib opencv_xfeatures2d320d.lib opencv_ximgproc320d.lib opencv_xobjdetect320d.lib opencv_xphoto320d.lib dlib.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Win32\Debug\samplesGenerator.pdb" /SUBSYSTEM:CONSOLE /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"D:\REALSENSE\pro\Proyectos_Frav\SolutionFRAV\Win32\Debug\samplesGenerator.lib" /MACHINE:X86 Debug\util_depth.obj
          Debug\util_faces.obj
@@ -19,4 +16,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:05.94
+Time Elapsed 00:00:01.42

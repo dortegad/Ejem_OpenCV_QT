@@ -46,14 +46,12 @@ bool sample(cv::Mat &imgRGB,
 
 	/*
 	Util_LBP_Dlib::LBP_RGB(imgRGB, features);
-	*/
 
 	Util_LBP_Dlib::LBP_Depth(imgDepth, features);
 
-	/*
-	Util_LBP_CV::LBP_RGB(imgRGB, features);
 	*/
-
+	Util_LBP_CV::LBP_RGB(imgRGB, features);
+	
 	/*
 	Util_LBP_CV::LBP_Depth(imgDepth, features);
 	*/
@@ -64,7 +62,8 @@ bool sample(cv::Mat &imgRGB,
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-	std::string fileImgs = "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
 
 	std::vector<std::string> filesDepth;
 	std::vector<std::string> filesRGB;
@@ -76,7 +75,7 @@ int main(int argc, char *argv[])
 	for (int i = 0; i < numFiles; i++)
 	{
 		std::string fileRGB = filesRGB[i];
-			
+
 		cv::Mat imgRGB = cv::imread(fileRGB);
 
 		cv::Mat imgDepth;
@@ -87,7 +86,22 @@ int main(int argc, char *argv[])
 
 		cv::Mat_<double> features;
 		if (sample(imgRGB, imgDepth, features))
-			std::cout << features << std::endl;
+		{
+			std::string user;
+			std::string attack;
+			std::string frame;
+			Util_FravAttack::infoFile(fileRGB, user, attack, frame);
+			std::stringstream outFileName;
+			outFileName << outDirName << "\\" << user << "_" << attack << "_" << frame << ".des";
+
+			std::cout << outFileName.str() << std::endl;
+
+			cv::FileStorage fileDes(outFileName.str().c_str(), cv::FileStorage::WRITE);
+			fileDes << "imgfaceDepth" << features;
+			fileDes.release();
+
+			//std::cout << features << std::endl;
+		}
 	}
 
 	std::getchar();

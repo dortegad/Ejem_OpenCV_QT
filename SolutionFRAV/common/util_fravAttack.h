@@ -15,5 +15,10 @@ public: static int readSamplesFiles(const std::string &fileImgs,
 									std::vector<std::string> &filesDepth,
 									std::vector<std::string> &filesRGB,
 									std::vector<std::string> &filesIR);
+
+public: static void Util_FravAttack::infoFile(const std::string &file,
+												std::string &user,
+												std::string &attack,
+												std::string &frame);
 };
 

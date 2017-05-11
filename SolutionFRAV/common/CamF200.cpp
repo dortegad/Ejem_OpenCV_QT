@@ -20,17 +20,21 @@ int CamF200::init()
 	if (!Util_Faces::init())
 		return 0;
 
+	/*
 	svm_depth_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_01.svm");
 	svm_depth_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_02.svm");
 	svm_depth_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_03.svm");
 	svm_depth_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_04.svm");
 	svm_depth_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_05.svm");
+	*/
 
-	svm_rgb_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_01.svm");
+	svm_rgb_attack_01 = cv::ml::SVM::load("svm_1_rgb.svm");
+	/*
 	svm_rgb_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_02.svm");
 	svm_rgb_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_03.svm");
 	svm_rgb_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_04.svm");
 	svm_rgb_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_05.svm");
+	*/
 
 
 	// Creates an instance of the PXCSenseManager 
@@ -200,23 +204,16 @@ float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm,
 					  float umbral,
 					  const std::string &msg)
 {
-	cv::Mat_<float> sampleRGB = features;
-	float result = svm->predict(sampleRGB, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
-	int preditClass = svm->predict(sampleRGB, cv::noArray());
+	cv::Mat_<float> sample = features;
+	float result = svm->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
+	int preditClass = svm->predict(sample, cv::noArray());
 	float confidence = 1.0 / (1.0 + exp(-result));
 
 	std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
 	if (confidence > umbral)
-		std::cout << msg << " = BONA FIDE" << std::endl;
-	else
 		std::cout << msg << " = ATTACK" << std::endl;
-
-	/*
-	if (result > 1.5)
-		std::cout << "depth BONA FIDE" << std::endl;
 	else
-		std::cout << "depth ATTACK" << std::endl;
-		*/
+		std::cout << msg << " = BONA FIDE" << std::endl;
 
 	return confidence;
 }
@@ -233,20 +230,31 @@ int CamF200::isAttack()
 	if (Util_Faces::detectFace(frameRGB, rectFace))
 	{
 		cv::Mat imgFace = frameRGB(rectFace);
-		cv::resize(imgFace, imgFace, cv::Size(100, 100));
+		cv::resize(imgFace, imgFace, cv::Size(100,100));
+		//cv::cvtColor(imgFace, imgFace, CV_BGR2RGB);
 		cv::imshow("face RGB", imgFace);
-		cv::Mat_<double> featuresRGB;
+		cv::Mat featuresRGB;
 		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
-		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.8, "RGB Attack 1");
-		float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.8, "RGB Attack 2");
+		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
+		/*float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.8, "RGB Attack 2");
 		float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
 		float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
 		float score_attack_05_rgb = this->evalue(svm_rgb_attack_05, featuresRGB, 0.8, "RGB Attack 5");
-
+		float score_rgb = (score_attack_01_rgb +
+			score_attack_02_rgb +
+			score_attack_03_rgb +
+			score_attack_04_rgb +
+			score_attack_05_rgb) / 5;
+		std::cout << "RGB = " << score_rgb;
+		if (score_rgb > 0.48)
+			std::cout << " = BONA FIDE" << std::endl;
+		else
+			std::cout << " = ATTACK" << std::endl;
+			*/
+		/*
 		cv::Mat imgFaceDepth = frameDepth(rectFace);
 		cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));
-		//this->imshowDepth("face depthImage", matFaceDepth, capture);
 		cv::Mat_<double> featureDepth;
 		Util_LBP_CV::LBP_Depth(imgFaceDepth, featureDepth);
 
@@ -255,6 +263,12 @@ int CamF200::isAttack()
 		float score_attack_03_depth = this->evalue(svm_depth_attack_03, featureDepth, 0.7, "DEPTH Attack 3");
 		float score_attack_04_depth = this->evalue(svm_depth_attack_04, featureDepth, 0.7, "DEPTH Attack 4");
 		float score_attack_05_depth = this->evalue(svm_depth_attack_05, featureDepth, 0.7, "DEPTH Attack 5");
+		float score_depth = (score_attack_01_depth +
+			score_attack_02_depth +
+			score_attack_03_depth +
+			score_attack_04_depth +
+			score_attack_05_depth) / 5;
+			*/
 	}
 
 	return 0;
