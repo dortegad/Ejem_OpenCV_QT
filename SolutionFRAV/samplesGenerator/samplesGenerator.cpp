@@ -97,7 +97,7 @@ int main(int argc, char *argv[])
 			std::cout << outFileName.str() << std::endl;
 
 			cv::FileStorage fileDes(outFileName.str().c_str(), cv::FileStorage::WRITE);
-			fileDes << "imgfaceDepth" << features;
+			fileDes << "descriptor" << features;
 			fileDes.release();
 
 			//std::cout << features << std::endl;
