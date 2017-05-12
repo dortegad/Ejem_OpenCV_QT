@@ -211,9 +211,9 @@ float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm,
 
 	std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
 	if (confidence > umbral)
-		std::cout << msg << " = ATTACK" << std::endl;
-	else
 		std::cout << msg << " = BONA FIDE" << std::endl;
+	else
+		std::cout << msg << " = ATTTACK" << std::endl;
 
 	return confidence;
 }
@@ -236,7 +236,7 @@ int CamF200::isAttack()
 		cv::Mat featuresRGB;
 		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
-		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
+		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
 		/*float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.8, "RGB Attack 2");
 		float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
 		float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
