@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>E:\DB_FINAL\RS\VISIBLE\verifyFiles.txt E:\DB_FINAL\RS\VISIBLE\DESCRIPTORS\LBP_RGB_NEW</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>E:\DB_FINAL\RS\VISIBLE\verifyFiles.txt E:\DB_FINAL\RS\VISIBLE\DESCRIPTORS\LBP_DEPTH_new\DESCRIPTORS LBP_DEPTH</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>

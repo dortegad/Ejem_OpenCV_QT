@@ -32,7 +32,8 @@
 //------------------------------------------------------------------------------
 bool sample(cv::Mat &imgRGB, 
 			cv::Mat &imgDepth, 
-			cv::Mat_<double> &features)
+			cv::Mat_<double> &features,
+			const std::string &samplesType)
 {
 	cv::Rect rectFace;
 	if (!Util_Faces::detectFace(imgRGB, rectFace))
@@ -44,17 +45,26 @@ bool sample(cv::Mat &imgRGB,
 	imgDepth = imgDepth(rectFace);
 	cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
 
-	/*
-	Util_LBP_Dlib::LBP_RGB(imgRGB, features);
-
-	Util_LBP_Dlib::LBP_Depth(imgDepth, features);
-
-	*/
-	Util_LBP_CV::LBP_RGB(imgRGB, features);
-	
-	/*
-	Util_LBP_CV::LBP_Depth(imgDepth, features);
-	*/
+	if (samplesType == "DLIB_LBP_RGB")
+	{
+		Util_LBP_Dlib::LBP_RGB(imgRGB, features);
+	}
+	else if (samplesType == "DLIB_LBP_DEPTH")
+	{
+		Util_LBP_Dlib::LBP_Depth(imgDepth, features);
+	}
+	else if (samplesType == "LBP_RGB")
+	{
+		Util_LBP_CV::LBP_RGB(imgRGB, features);
+	}
+	else if(samplesType == "LBP_DEPTH")
+	{
+		Util_LBP_CV::LBP_Depth(imgDepth, features);
+	}
+	else
+	{
+		return false;
+	}
 
 	return true;
 }
@@ -64,6 +74,7 @@ int main(int argc, char *argv[])
 {
 	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
+	std::string samplesType = argv[3];
 
 	std::vector<std::string> filesDepth;
 	std::vector<std::string> filesRGB;
@@ -85,7 +96,7 @@ int main(int argc, char *argv[])
 		fs2.release();
 
 		cv::Mat_<double> features;
-		if (sample(imgRGB, imgDepth, features))
+		if (sample(imgRGB, imgDepth, features, samplesType))
 		{
 			std::string user;
 			std::string attack;

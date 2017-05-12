@@ -28,13 +28,13 @@ int CamF200::init()
 	svm_depth_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_05.svm");
 	*/
 
-	svm_rgb_attack_01 = cv::ml::SVM::load("svm_1_rgb.svm");
-	/*
-	svm_rgb_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_02.svm");
-	svm_rgb_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_03.svm");
-	svm_rgb_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_04.svm");
-	svm_rgb_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_RGB\\svm_attack_05.svm");
-	*/
+	//svm_rgb_attack_01 = cv::ml::SVM::load("svm_1_rgb.svm");
+
+	svm_rgb_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_01.svm");
+	svm_rgb_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_02.svm");
+	svm_rgb_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_03.svm");
+	svm_rgb_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_04.svm");
+	svm_rgb_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_05.svm");
 
 
 	// Creates an instance of the PXCSenseManager 
@@ -209,11 +209,12 @@ float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm,
 	int preditClass = svm->predict(sample, cv::noArray());
 	float confidence = 1.0 / (1.0 + exp(-result));
 
-	std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
+	/*std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
 	if (confidence > umbral)
 		std::cout << msg << " = BONA FIDE" << std::endl;
 	else
 		std::cout << msg << " = ATTTACK" << std::endl;
+	*/
 
 	return confidence;
 }
@@ -236,8 +237,9 @@ int CamF200::isAttack()
 		cv::Mat featuresRGB;
 		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
-		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
-		/*float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.8, "RGB Attack 2");
+		//float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
+		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
+		float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.6, "RGB Attack 2");
 		float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
 		float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
 		float score_attack_05_rgb = this->evalue(svm_rgb_attack_05, featuresRGB, 0.8, "RGB Attack 5");
@@ -247,11 +249,10 @@ int CamF200::isAttack()
 			score_attack_04_rgb +
 			score_attack_05_rgb) / 5;
 		std::cout << "RGB = " << score_rgb;
-		if (score_rgb > 0.48)
+		if (score_rgb > 0.6)
 			std::cout << " = BONA FIDE" << std::endl;
 		else
 			std::cout << " = ATTACK" << std::endl;
-			*/
 		/*
 		cv::Mat imgFaceDepth = frameDepth(rectFace);
 		cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));

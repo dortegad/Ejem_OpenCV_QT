@@ -56,9 +56,9 @@ void Util_Depth::normalize(cv::Mat &depthImage, cv::Mat &depthNorImg)
 	depthNorImg = depthNorm;
 
 	// PARA VER LA IMAGEN NORMALIZADA
-	cv::Mat depthGrayNormalicedFace;
-	depthNorImg.convertTo(depthGrayNormalicedFace, CV_8UC1);
-	cv::equalizeHist(depthGrayNormalicedFace, depthGrayNormalicedFace);
-	cv::imshow("imagenDepth", depthGrayNormalicedFace);
+	//cv::Mat depthGrayNormalicedFace;
+	//depthNorImg.convertTo(depthGrayNormalicedFace, CV_8UC1);
+	//cv::equalizeHist(depthGrayNormalicedFace, depthGrayNormalicedFace);
+	//cv::imshow("imagenDepth", depthGrayNormalicedFace);
 	//cv::waitKey();
 }
