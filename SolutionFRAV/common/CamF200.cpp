@@ -20,13 +20,11 @@ int CamF200::init()
 	if (!Util_Faces::init())
 		return 0;
 
-	/*
-	svm_depth_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_01.svm");
-	svm_depth_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_02.svm");
-	svm_depth_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_03.svm");
-	svm_depth_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_04.svm");
-	svm_depth_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH\\svm_attack_05.svm");
-	*/
+	svm_depth_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_01.svm");
+	svm_depth_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_02.svm");
+	svm_depth_attack_03 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_03.svm");
+	svm_depth_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_04.svm");
+	svm_depth_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_05.svm");
 
 	//svm_rgb_attack_01 = cv::ml::SVM::load("svm_1_rgb.svm");
 
@@ -237,6 +235,7 @@ int CamF200::isAttack()
 		cv::Mat featuresRGB;
 		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
+		/*
 		//float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
 		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
 		float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.6, "RGB Attack 2");
@@ -253,7 +252,8 @@ int CamF200::isAttack()
 			std::cout << " = BONA FIDE" << std::endl;
 		else
 			std::cout << " = ATTACK" << std::endl;
-		/*
+			*/
+
 		cv::Mat imgFaceDepth = frameDepth(rectFace);
 		cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));
 		cv::Mat_<double> featureDepth;
@@ -269,7 +269,12 @@ int CamF200::isAttack()
 			score_attack_03_depth +
 			score_attack_04_depth +
 			score_attack_05_depth) / 5;
-			*/
+
+		std::cout << "DEPTH = " << score_depth;
+		if (score_depth > 0.6)
+			std::cout << " = BONA FIDE" << std::endl;
+		else
+			std::cout << " = ATTACK" << std::endl;
 	}
 
 	return 0;
