@@ -33,9 +33,11 @@ private:
 	void convertPXCImageToOpenCVMat(PXCImage *inImg, cv::Mat *outImg);
 	void capture(cv::Mat & frameRGB, cv::Mat &frameDepth);
 	float evalue(cv::Ptr<cv::ml::SVM> svm, cv::Mat & features, float umbral, const std::string &msg);
+	float isAttackFrame();
 public:
 	CamF200();
 	~CamF200();
+	int load();
 	int init();
 	int isAttack();
 	int stop();

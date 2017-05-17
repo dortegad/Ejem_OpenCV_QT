@@ -16,10 +16,10 @@ CamF200::~CamF200()
 }
 
 //---------------------------------------------------------------------------------------
-int CamF200::init()
+int CamF200::load()
 {
 	if (!Util_Faces::init())
-		return 0;
+		return -1;
 
 	svm_depth_attack_01 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_01.svm");
 	svm_depth_attack_02 = cv::ml::SVM::load(".\\SVM_LBP_DEPTH_NEW\\svm_attack_02.svm");
@@ -35,7 +35,12 @@ int CamF200::init()
 	svm_rgb_attack_04 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_04.svm");
 	svm_rgb_attack_05 = cv::ml::SVM::load(".\\SVM_LBP_RGB_NEW\\svm_attack_05.svm");
 
+	return 0;
+}
 
+//---------------------------------------------------------------------------------------
+int CamF200::init()
+{
 	// Creates an instance of the PXCSenseManager 
 	pp = PXCSenseManager::CreateInstance();
 	if (!pp) {
@@ -207,19 +212,17 @@ float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm,
 	float result = svm->predict(sample, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 	int preditClass = svm->predict(sample, cv::noArray());
 	float confidence = 1.0 / (1.0 + exp(-result));
-
 	/*std::cout << msg << " : " << result << " - " << confidence << " - " << preditClass << std::endl;
 	if (confidence > umbral)
 		std::cout << msg << " = BONA FIDE" << std::endl;
 	else
 		std::cout << msg << " = ATTTACK" << std::endl;
 	*/
-
 	return confidence;
 }
 
 //---------------------------------------------------------------------------------------
-int CamF200::isAttack()
+float CamF200::isAttackFrame()
 {
 	cv::Mat frameRGB;
 	cv::Mat frameDepth;
@@ -227,72 +230,103 @@ int CamF200::isAttack()
 	//cv::imshow("frame RGB", frame);
 
 	cv::Rect rectFace;
-	if (Util_Faces::detectFace(frameRGB, rectFace))
+	if (!Util_Faces::detectFace(frameRGB, rectFace))
+		return 0.0;
+
+	cv::Mat imgFace = frameRGB(rectFace);
+	cv::resize(imgFace, imgFace, cv::Size(100, 100));
+	//cv::cvtColor(imgFace, imgFace, CV_BGR2RGB);
+	cv::imshow("face RGB", imgFace);
+	cv::Mat featuresRGB;
+	Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
+
+	//float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
+	float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
+	float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.6, "RGB Attack 2");
+	float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
+	float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
+	float score_attack_05_rgb = this->evalue(svm_rgb_attack_05, featuresRGB, 0.8, "RGB Attack 5");
+	//float score_rgb = (score_attack_01_rgb +
+	//	score_attack_02_rgb +
+	//	score_attack_03_rgb +
+	//	score_attack_04_rgb +
+	//	score_attack_05_rgb) / 5;
+	//std::cout << "RGB = " << score_rgb;
+	//if (score_rgb > 0.6)
+	//	std::cout << " = BONA FIDE" << std::endl;
+	//else
+	//	std::cout << " = ATTACK" << std::endl;
+
+	cv::Mat imgFaceDepth = frameDepth(rectFace);
+	cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));
+	cv::Mat_<double> featureDepth;
+	Util_LBP_CV::LBP_Depth(imgFaceDepth, featureDepth);
+
+	float score_attack_01_depth = this->evalue(svm_depth_attack_01, featureDepth, 0.7, "DEPTH Attack 1");
+	float score_attack_02_depth = this->evalue(svm_depth_attack_02, featureDepth, 0.7, "DEPTH Attack 2");
+	float score_attack_03_depth = this->evalue(svm_depth_attack_03, featureDepth, 0.7, "DEPTH Attack 3");
+	float score_attack_04_depth = this->evalue(svm_depth_attack_04, featureDepth, 0.7, "DEPTH Attack 4");
+	float score_attack_05_depth = this->evalue(svm_depth_attack_05, featureDepth, 0.7, "DEPTH Attack 5");
+	//float score_depth = (score_attack_01_depth +
+	//	score_attack_02_depth +
+	//	score_attack_03_depth +
+	//	score_attack_04_depth +
+	//	score_attack_05_depth) / 5;
+	//std::cout << "DEPTH = " << score_depth;
+	//if (score_depth > 0.6)
+	//	std::cout << " = BONA FIDE" << std::endl;
+	//else
+	//	std::cout << " = ATTACK" << std::endl;
+
+	std::vector<float> scoresFusion;
+	scoresFusion.push_back(score_attack_01_rgb);
+	scoresFusion.push_back(score_attack_02_rgb);
+	scoresFusion.push_back(score_attack_03_rgb);
+	scoresFusion.push_back(score_attack_04_rgb);
+	scoresFusion.push_back(score_attack_05_rgb);
+	scoresFusion.push_back(score_attack_01_depth);
+	scoresFusion.push_back(score_attack_02_depth);
+	scoresFusion.push_back(score_attack_03_depth);
+	scoresFusion.push_back(score_attack_04_depth);
+	//scoresFusion.push_back(score_attack_05_depth);
+	std::vector<float>::iterator itMin = std::min_element(scoresFusion.begin(), scoresFusion.end());
+	float minScore = *itMin;
+	std::cout << minScore;
+	if (minScore > 0.28)
+		std::cout << " = BONA FIDE" << std::endl;
+	else
+		std::cout << " = ATTACK" << std::endl;
+
+	return minScore;
+}
+
+//---------------------------------------------------------------------------------------
+int CamF200::isAttack()
+{
+	int numFrames = 3;
+
+	std::vector<float> scoreFrames;
+	int i = 0;
+	while (i < numFrames)
 	{
-		cv::Mat imgFace = frameRGB(rectFace);
-		cv::resize(imgFace, imgFace, cv::Size(100,100));
-		//cv::cvtColor(imgFace, imgFace, CV_BGR2RGB);
-		cv::imshow("face RGB", imgFace);
-		cv::Mat featuresRGB;
-		Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
+		std::cout << "frame " << i << std::endl;
+		float result = isAttackFrame();
+		cv::waitKey(15);
 
-		//float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.45, "RGB Attack 1");
-		float score_attack_01_rgb = this->evalue(svm_rgb_attack_01, featuresRGB, 0.6, "RGB Attack 1");
-		float score_attack_02_rgb = this->evalue(svm_rgb_attack_02, featuresRGB, 0.6, "RGB Attack 2");
-		float score_attack_03_rgb = this->evalue(svm_rgb_attack_03, featuresRGB, 0.8, "RGB Attack 3");
-		float score_attack_04_rgb = this->evalue(svm_rgb_attack_04, featuresRGB, 0.8, "RGB Attack 4");
-		float score_attack_05_rgb = this->evalue(svm_rgb_attack_05, featuresRGB, 0.8, "RGB Attack 5");
-		//float score_rgb = (score_attack_01_rgb +
-		//	score_attack_02_rgb +
-		//	score_attack_03_rgb +
-		//	score_attack_04_rgb +
-		//	score_attack_05_rgb) / 5;
-		//std::cout << "RGB = " << score_rgb;
-		//if (score_rgb > 0.6)
-		//	std::cout << " = BONA FIDE" << std::endl;
-		//else
-		//	std::cout << " = ATTACK" << std::endl;
-
-		cv::Mat imgFaceDepth = frameDepth(rectFace);
-		cv::resize(imgFaceDepth, imgFaceDepth, cv::Size(100, 100));
-		cv::Mat_<double> featureDepth;
-		Util_LBP_CV::LBP_Depth(imgFaceDepth, featureDepth);
-
-		float score_attack_01_depth = this->evalue(svm_depth_attack_01, featureDepth, 0.7, "DEPTH Attack 1");
-		float score_attack_02_depth = this->evalue(svm_depth_attack_02, featureDepth, 0.7, "DEPTH Attack 2");
-		float score_attack_03_depth = this->evalue(svm_depth_attack_03, featureDepth, 0.7, "DEPTH Attack 3");
-		float score_attack_04_depth = this->evalue(svm_depth_attack_04, featureDepth, 0.7, "DEPTH Attack 4");
-		float score_attack_05_depth = this->evalue(svm_depth_attack_05, featureDepth, 0.7, "DEPTH Attack 5");
-		//float score_depth = (score_attack_01_depth +
-		//	score_attack_02_depth +
-		//	score_attack_03_depth +
-		//	score_attack_04_depth +
-		//	score_attack_05_depth) / 5;
-		//std::cout << "DEPTH = " << score_depth;
-		//if (score_depth > 0.6)
-		//	std::cout << " = BONA FIDE" << std::endl;
-		//else
-		//	std::cout << " = ATTACK" << std::endl;
-
-		std::vector<float> scoresFusion;
-		scoresFusion.push_back(score_attack_01_rgb);
-		scoresFusion.push_back(score_attack_02_rgb);
-		scoresFusion.push_back(score_attack_03_rgb);
-		scoresFusion.push_back(score_attack_04_rgb);
-		scoresFusion.push_back(score_attack_05_rgb);
-		scoresFusion.push_back(score_attack_01_depth);
-		scoresFusion.push_back(score_attack_02_depth);
-		scoresFusion.push_back(score_attack_03_depth);
-		scoresFusion.push_back(score_attack_04_depth);
-		scoresFusion.push_back(score_attack_05_depth);
-		std::vector<float>::iterator itMin = std::min_element(scoresFusion.begin(), scoresFusion.end());		
-		float minScore = *itMin;
-		std::cout << minScore;
-		if (minScore > 0.28)
-			std::cout << " = BONA FIDE" << std::endl;
-		else
-			std::cout << " = ATTACK" << std::endl;
+		if (result > 0.0)
+		{
+			scoreFrames.push_back(result);
+			i++;
+		}
 	}
+
+	std::vector<float>::iterator itMin = std::min_element(scoreFrames.begin(), scoreFrames.end());
+	float minScore = *itMin;
+	std::cout << "RESULT = " << minScore;
+	if (minScore > 0.28)
+		std::cout << " = BONA FIDE" << std::endl;
+	else
+		std::cout << " = ATTACK" << std::endl;
 
 	return 0;
 }

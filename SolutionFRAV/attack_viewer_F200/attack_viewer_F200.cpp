@@ -2,15 +2,20 @@
 //
 
 #include "stdafx.h"
-#include "opencv2\core\core.hpp"
-#include "opencv2\highgui\highgui.hpp"
-#include "opencv2\imgproc\imgproc.hpp"
+#include <iostream>
 
 #include "CamF200.h"
+
+#include <opencv2/imgproc/imgproc.hpp>
+#include <opencv2/highgui/highgui.hpp>
+#include <opencv2/core/core.hpp>
 
 int main(int argc, char* argv[])
 {
 	CamF200 cam;
+
+	if (cam.load() != 0)
+		return 0;
 
 	if (cam.init() != 0)
 		return 0;
@@ -20,7 +25,7 @@ int main(int argc, char* argv[])
 	{
 		cam.isAttack();
 
-		cv::waitKey(1);
+		cv::waitKey();
 	}
 
 	cam.stop();

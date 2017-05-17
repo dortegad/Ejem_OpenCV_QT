@@ -28,14 +28,12 @@ bool Util_Faces::detectFace(const cv::Mat &img, cv::Rect &rect)
 	cv::equalizeHist(imgGray, imgGray);
 
 	//-- Detect faces
-	Util_Faces::face_cascade.detectMultiScale(imgGray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE, cv::Size(30, 30));
+	Util_Faces::face_cascade.detectMultiScale(imgGray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE/*, cv::Size(newCols/5, newRows/5)*/);
 
-	if (faces.size() > 0)
-	{
-		cv::Rect ajustRect = faces[0];
-		rect = cv::Rect(ajustRect.x*ratio, ajustRect.y*ratio, ajustRect.width*ratio, ajustRect.height*ratio);
-		return true;
-	}
-	else
+	if (faces.size() == 0)
 		return false;
+
+	cv::Rect ajustRect = faces[0];	
+	rect = cv::Rect(ajustRect.x*ratio, ajustRect.y*ratio, ajustRect.width*ratio, ajustRect.height*ratio);
+	return true;
 }
