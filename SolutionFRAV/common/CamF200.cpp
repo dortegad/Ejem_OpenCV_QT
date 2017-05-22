@@ -49,12 +49,12 @@ int CamF200::init()
 	}
 
 	// Optional steps to send feedback to Intel Corporation to understand how often each SDK sample is used.
-	PXCMetadata * md = pp->QuerySession()->QueryInstance<PXCMetadata>();
-	if (md)
-	{
-		pxcCHAR sample_name[] = L"Camera Viewer";
-		md->AttachBuffer(PXCSessionService::FEEDBACK_SAMPLE_INFO, (pxcBYTE*)sample_name, sizeof(sample_name));
-	}
+	//PXCMetadata * md = pp->QuerySession()->QueryInstance<PXCMetadata>();
+	//if (md)
+	//{
+	//	pxcCHAR sample_name[] = L"Camera Viewer";
+	//	md->AttachBuffer(PXCSessionService::FEEDBACK_SAMPLE_INFO, (pxcBYTE*)sample_name, sizeof(sample_name));
+	//}
 
 
 	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 1920, 1080);// , 30.0F);
@@ -222,12 +222,8 @@ float CamF200::evalue(cv::Ptr<cv::ml::SVM> svm,
 }
 
 //---------------------------------------------------------------------------------------
-float CamF200::isAttackFrame()
+float CamF200::isAttackFrame(cv::Mat &frameRGB, cv::Mat &frameDepth)
 {
-	cv::Mat frameRGB;
-	cv::Mat frameDepth;
-	this->capture(frameRGB, frameDepth);
-	//cv::imshow("frame RGB", frame);
 
 	cv::Rect rectFace;
 	if (!Util_Faces::detectFace(frameRGB, rectFace))
@@ -236,7 +232,7 @@ float CamF200::isAttackFrame()
 	cv::Mat imgFace = frameRGB(rectFace);
 	cv::resize(imgFace, imgFace, cv::Size(100, 100));
 	//cv::cvtColor(imgFace, imgFace, CV_BGR2RGB);
-	cv::imshow("face RGB", imgFace);
+	//cv::imshow("face RGB", imgFace);
 	cv::Mat featuresRGB;
 	Util_LBP_CV::LBP_RGB(imgFace, featuresRGB);
 
@@ -298,6 +294,17 @@ float CamF200::isAttackFrame()
 		std::cout << " = ATTACK" << std::endl;
 
 	return minScore;
+}
+
+//---------------------------------------------------------------------------------------
+float CamF200::isAttackFrame()
+{
+	cv::Mat frameRGB;
+	cv::Mat frameDepth;
+	this->capture(frameRGB, frameDepth);
+	//cv::imshow("frame RGB", frame);
+
+	return isAttackFrame(frameRGB, frameDepth);
 }
 
 //---------------------------------------------------------------------------------------

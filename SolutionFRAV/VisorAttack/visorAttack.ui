@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1028</width>
-    <height>1293</height>
+    <width>1024</width>
+    <height>786</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,8 +17,8 @@
    <widget class="QPushButton" name="pBShowImg">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>1100</y>
+      <x>60</x>
+      <y>20</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -31,9 +31,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>200</y>
+      <y>160</y>
       <width>1001</width>
-      <height>891</height>
+      <height>571</height>
      </rect>
     </property>
     <property name="styleSheet">
@@ -43,58 +43,11 @@
      <string/>
     </property>
    </widget>
-   <widget class="QGroupBox" name="groupBox">
-    <property name="geometry">
-     <rect>
-      <x>20</x>
-      <y>110</y>
-      <width>631</width>
-      <height>101</height>
-     </rect>
-    </property>
-    <property name="title">
-     <string>Adjust</string>
-    </property>
-    <widget class="QSplitter" name="splitter">
-     <property name="geometry">
-      <rect>
-       <x>40</x>
-       <y>50</y>
-       <width>492</width>
-       <height>37</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QRadioButton" name="rBViewReal">
-      <property name="text">
-       <string>Real</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rBViewAdjustDepth">
-      <property name="text">
-       <string>Adjust Depth</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rBViewAdjustRGB">
-      <property name="text">
-       <string>Adjust RGB</string>
-      </property>
-     </widget>
-    </widget>
-   </widget>
    <widget class="QPushButton" name="pBShowImg_4">
     <property name="geometry">
      <rect>
-      <x>120</x>
-      <y>1100</y>
+      <x>170</x>
+      <y>20</y>
       <width>101</width>
       <height>51</height>
      </rect>
@@ -103,76 +56,61 @@
      <string>Stop</string>
     </property>
    </widget>
-   <widget class="QSplitter" name="splitter_2">
+   <widget class="QPushButton" name="pBShowImg_5">
     <property name="geometry">
      <rect>
-      <x>810</x>
-      <y>150</y>
-      <width>161</width>
-      <height>37</height>
+      <x>280</x>
+      <y>20</y>
+      <width>101</width>
+      <height>51</height>
      </rect>
     </property>
-    <property name="orientation">
-     <enum>Qt::Horizontal</enum>
+    <property name="text">
+     <string>is attack</string>
     </property>
-    <widget class="QRadioButton" name="rBRealSizeImg_1">
-     <property name="text">
-      <string>Real size</string>
-     </property>
-     <property name="checked">
-      <bool>false</bool>
-     </property>
-     <property name="autoExclusive">
-      <bool>false</bool>
-     </property>
-    </widget>
    </widget>
-   <widget class="QGroupBox" name="groupBox_3">
+   <widget class="QLabel" name="lAttack">
     <property name="geometry">
      <rect>
-      <x>20</x>
-      <y>10</y>
-      <width>461</width>
+      <x>500</x>
+      <y>30</y>
+      <width>331</width>
       <height>101</height>
      </rect>
     </property>
-    <property name="title">
-     <string>View</string>
+    <property name="font">
+     <font>
+      <pointsize>50</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
     </property>
-    <widget class="QSplitter" name="splitter_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>40</y>
-       <width>492</width>
-       <height>37</height>
-      </rect>
-     </property>
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <widget class="QRadioButton" name="rBRGB">
-      <property name="text">
-       <string>RGB</string>
-      </property>
-      <property name="checked">
-       <bool>true</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rBDepth">
-      <property name="text">
-       <string>Depth</string>
-      </property>
-      <property name="checked">
-       <bool>false</bool>
-      </property>
-     </widget>
-     <widget class="QRadioButton" name="rBIR">
-      <property name="text">
-       <string>IR</string>
-      </property>
-     </widget>
-    </widget>
+    <property name="styleSheet">
+     <string notr="true">color: rgb(255, 0, 0);</string>
+    </property>
+    <property name="text">
+     <string>ATTACK</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="lBonaFide">
+    <property name="geometry">
+     <rect>
+      <x>440</x>
+      <y>30</y>
+      <width>491</width>
+      <height>101</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <pointsize>50</pointsize>
+      <weight>75</weight>
+      <bold>true</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>BONA FIDE</string>
+    </property>
    </widget>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -180,8 +118,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1028</width>
-     <height>47</height>
+     <width>1024</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
@@ -207,8 +145,8 @@
    <slot>view()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>441</y>
+     <x>510</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>136</x>
@@ -223,12 +161,28 @@
    <slot>stop()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>120</x>
-     <y>442</y>
+     <x>620</x>
+     <y>110</y>
     </hint>
     <hint type="destinationlabel">
      <x>134</x>
      <y>552</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pBShowImg_5</sender>
+   <signal>clicked()</signal>
+   <receiver>VisorAttackClass</receiver>
+   <slot>isAttack()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>783</x>
+     <y>97</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>811</x>
+     <y>174</y>
     </hint>
    </hints>
   </connection>
@@ -239,5 +193,6 @@
   <slot>record()</slot>
   <slot>stop()</slot>
   <slot>selectFile()</slot>
+  <slot>isAttack()</slot>
  </slots>
 </ui>

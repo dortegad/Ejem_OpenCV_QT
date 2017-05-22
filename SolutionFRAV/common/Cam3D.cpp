@@ -23,12 +23,12 @@ int Cam3D::init()
 	}
 
 	// Optional steps to send feedback to Intel Corporation to understand how often each SDK sample is used.
-	PXCMetadata * md = pp->QuerySession()->QueryInstance<PXCMetadata>();
-	if (md)
-	{
-		pxcCHAR sample_name[] = L"Camera Viewer";
-		md->AttachBuffer(PXCSessionService::FEEDBACK_SAMPLE_INFO, (pxcBYTE*)sample_name, sizeof(sample_name));
-	}
+	//PXCMetadata * md = pp->QuerySession()->QueryInstance<PXCMetadata>();
+	//if (md)
+	//{
+	//	pxcCHAR sample_name[] = L"Camera Viewer";
+	//	md->AttachBuffer(PXCSessionService::FEEDBACK_SAMPLE_INFO, (pxcBYTE*)sample_name, sizeof(sample_name));
+	//}
 
 
 	// Sets file recording or playback
@@ -37,8 +37,8 @@ int Cam3D::init()
 	//if (cmdl.m_sdname)
 	//cm->FilterByDeviceInfo(cmdl.m_sdname, 0, 0);
 	
-	int ancho = 640; //640  1920;
-	int alto = 480; //480 1080;
+	//int ancho = 640; //640  1920;
+	//int alto = 480; //480 1080;
 
 	pp->EnableStream(PXCCapture::STREAM_TYPE_COLOR, 1920, 1080);// , 30.0F);
 	pp->EnableStream(PXCCapture::STREAM_TYPE_IR, 640, 480);// , 30.0F);
@@ -323,8 +323,8 @@ cv::Mat Cam3D::captureReal(PXCCapture::Device *device,
 		{
 			cv::Mat *img = new cv::Mat();
 			this->convertPXCImageToOpenCVMat(sample->color, img);
-			cvSample = img->clone();
-			delete img;
+			cvSample = *img;// ->clone();
+			//delete img;
 		}
 	}
 	else if (imgType == DEPTH)
@@ -462,7 +462,6 @@ cv::Mat Cam3D::capture(ImgType imgType,
 	//Releases lock so pipeline can process next frame 
 	pp->ReleaseFrame();
 
-	wprintf_s(L"Exiting\n");
 
 	return cvSample;
 }

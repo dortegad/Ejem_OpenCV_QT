@@ -9,11 +9,12 @@
 #include "opencv2\core\core.hpp"
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
+#include "opencv2\objdetect\objdetect.hpp"
 
 //STD
 #include <conio.h>
 
-#include "Cam3D.h"
+#include "CamF200.h"
 
 
 class VisorAttack : public QMainWindow
@@ -23,6 +24,7 @@ class VisorAttack : public QMainWindow
 public slots:
 	int view();
 	void stop();
+	void isAttack();
 
 public:
 	VisorAttack(QWidget *parent = 0);
@@ -30,7 +32,9 @@ public:
 private:
 	Ui::VisorAttackClass ui;
 	bool stopStream;
-	Cam3D *cam;
+	bool verifyAttack;
+
+	CamF200 *cam;
 
 	void showImg(const cv::Mat &imagen);
 	int stream();

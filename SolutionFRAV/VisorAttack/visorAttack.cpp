@@ -7,6 +7,7 @@
 #include <conio.h>
 #include "qfiledialog.h"
 #include "qmessagebox.h"
+#include "qthread.h"
 
 #include <iostream>
 #include <fstream>
@@ -14,6 +15,7 @@
 #include <windows.h>
 #include <iostream>
 
+#include "util_faces.h"
 
 #pragma comment(lib, "Ws2_32.lib")
 
@@ -23,6 +25,11 @@ VisorAttack::VisorAttack(QWidget *parent)
 	: QMainWindow(parent)
 {
 	ui.setupUi(this);
+	ui.lBonaFide->setVisible(false);
+	ui.lAttack->setVisible(false);
+
+	cam = new CamF200();
+	cam->load();
 }
 
 //--------------------------------------------------------------------------------------------------------------
@@ -33,16 +40,16 @@ VisorAttack::~VisorAttack()
 //--------------------------------------------------------------------------------------------------------------
 void VisorAttack::showImg(const cv::Mat &imagen)
 {
-	if (ui.rBRealSizeImg_1->isChecked())
-		cv::imshow("RealSize", imagen);
-	else
-		cv::destroyWindow("RealSize");
+	//if (ui.rBRealSizeImg_1->isChecked())
+	//	cv::imshow("RealSize", imagen);
+	//else
+	//	cv::destroyWindow("RealSize");
 
 	cv::Mat imgMostrar = imagen;
-	if (imagen.type() == CV_8UC1)
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_GRAY2RGB);
-	else
-		cv::cvtColor(imagen, imgMostrar, cv::COLOR_BGR2RGB);
+	//if (imagen.type() == CV_8UC1)
+	//	cv::cvtColor(imagen, imgMostrar, cv::COLOR_GRAY2RGB);
+	//else
+	cv::cvtColor(imagen, imgMostrar, cv::COLOR_BGR2RGB);
 
 	QImage imagenQT = QImage((const unsigned char *)imgMostrar.data, imgMostrar.cols, imgMostrar.rows, imgMostrar.step, QImage::Format_RGB888);
 	ui.lImg_1->setPixmap(QPixmap::fromImage(imagenQT));
@@ -56,39 +63,59 @@ void VisorAttack::showImg(const cv::Mat &imagen)
 int VisorAttack::stream()
 {
 	stopStream = false;
+	std::vector<float> attackResults;
+	int numFramesAttackVerify = 3;
 
-	//Stream Data		
-	while (!stopStream) //(int nframes = 0; nframes<cmdl.m_nframes; nframes++) {
+	int framesShowResult = 0;
+
+	while (!stopStream)
 	{
-		ImgType imgType = RGB;
-		ImgAdjustType adjustType = REAL;
-	
-		if (ui.rBViewReal->isChecked())
-			adjustType = REAL;
-		else if (ui.rBViewAdjustDepth->isChecked())
-			adjustType = ADJUST_DEPTH;
-		else if (ui.rBViewAdjustRGB->isChecked())
-			adjustType = ADJUST_RGB;
-
-		if (this->ui.rBRGB->isChecked())
-			imgType = RGB;
-		else if (this->ui.rBDepth->isChecked())
-			imgType = DEPTH;
-		else if (this->ui.rBIR->isChecked())
-			imgType = IR;
-
-		cv::Mat img = cam->capture(imgType, adjustType);
-		this->showImg(img);
-
-		qApp->processEvents();
-
-		if (_kbhit()) { // Break loop
-			int c = _getch() & 255;
-			if (c == 27 || c == 'q' || c == 'Q') break; // ESC|q|Q for Exit
+		if (framesShowResult > 0)
+			framesShowResult--;
+		else
+		{
+			ui.lBonaFide->setVisible(false);
+			ui.lAttack->setVisible(false);
 		}
-	}
 
-	wprintf_s(L"Exiting\n");
+		cv::Mat rgbImg;
+		cv::Mat depthImg;
+		cam->capture(rgbImg, depthImg);
+
+		cv::Rect rectFace;
+		Util_Faces::detectFace(rgbImg, rectFace);
+
+		if (verifyAttack)
+		{
+			float result = cam->isAttackFrame(rgbImg, depthImg);
+			attackResults.push_back(result);
+			if (attackResults.size() == numFramesAttackVerify)
+			{ 
+				std::vector<float>::iterator itMin = std::min_element(attackResults.begin(), attackResults.end());
+				float minScore = *itMin;
+				std::cout << "RESULT = " << minScore;
+				if (minScore > 0.28)
+				{
+					ui.lBonaFide->setVisible(true);
+					std::cout << " = BONA FIDE" << std::endl;
+
+				}
+				else
+				{
+					ui.lAttack->setVisible(true);
+					std::cout << " = ATTACK" << std::endl;
+				}
+				framesShowResult = 10;
+				attackResults.clear();
+				verifyAttack = false;
+			}
+		}
+
+		cv::rectangle(rgbImg, rectFace, cv::Scalar(0, 0, 255), 3);
+		this->showImg(rgbImg);
+
+		//qApp->processEvents();
+	}
 
 	return 0;
 }
@@ -96,7 +123,6 @@ int VisorAttack::stream()
 //--------------------------------------------------------------------------------------------------------------
 int VisorAttack::view()
 {
-	cam = new Cam3D();
 	cam->init();
 
 	stream();
@@ -107,8 +133,17 @@ int VisorAttack::view()
 //--------------------------------------------------------------------------------------------------------------
 void VisorAttack::stop()
 {
+	if (stopStream)
+		return;
+
 	stopStream = true;
 
 	cam->stop();
 	delete cam;
+}
+
+//--------------------------------------------------------------------------------------------------------------
+void VisorAttack::isAttack()
+{
+	verifyAttack = true;
 }

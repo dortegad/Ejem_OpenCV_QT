@@ -19,7 +19,7 @@ bool Util_Faces::detectFace(const cv::Mat &img, cv::Rect &rect)
 	std::vector<cv::Rect> faces;
 	cv::Mat imgGray;
 
-	float ratio = 3.0;
+	float ratio = 5.0;
 	float invertRatio = 1 / ratio;
 	int newCols = img.cols*invertRatio;
 	int newRows = img.rows*invertRatio;
