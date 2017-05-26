@@ -90,11 +90,45 @@ int Util_FravAttack::readSamplesFiles(const std::string &fileImgs,
 }
 
 //------------------------------------------------------------------------------
+int Util_FravAttack::readSamplesFiles(const std::string &fileImgs,
+									std::vector<std::string> &files)
+{
+	std::ifstream imgsFile;
+	imgsFile.open(fileImgs.c_str());
+
+	files.clear();
+
+	while (imgsFile.good())
+	{
+		std::string sSamples;
+		if (getline(imgsFile, sSamples))
+		{
+			std::stringstream line;
+			line << sSamples.c_str();
+			files.push_back(line.str());
+
+			std::cout << line.str() << std::endl;
+		}
+	}
+	imgsFile.close();
+
+	return files.size();
+}
+
+//------------------------------------------------------------------------------
+void Util_FravAttack::infoFileUser(const std::string &file,
+									std::string &user)
+{
+	user = file.substr(file.find("USER_") + 5, 3);
+}
+
+//------------------------------------------------------------------------------
 void Util_FravAttack::infoFile(const std::string &file,
 								std::string &user,
 								std::string &attack,
 								std::string &frame)
 {
+	Util_FravAttack::infoFileUser(file, user);
 	user = file.substr(file.find("USER_")+5, 3);
 	attack = "00";
 	if (file.find("attack_") != std::string::npos)

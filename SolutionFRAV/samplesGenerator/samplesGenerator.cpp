@@ -30,20 +30,26 @@
 #include <util_fravAttack.h>
 
 //------------------------------------------------------------------------------
-bool sample(cv::Mat &imgRGB, 
-			cv::Mat &imgDepth, 
-			cv::Mat_<double> &features,
-			const std::string &samplesType)
+bool sample(cv::Mat &imgRGB,
+	cv::Mat &imgDepth,
+	cv::Mat_<double> &features,
+	const std::string &samplesType,
+	bool segFace = true)
 {
-	cv::Rect rectFace;
-	if (!Util_Faces::detectFace(imgRGB, rectFace))
-		return false;
+	if (segFace)
+	{
+		cv::Rect rectFace;
+		if (!Util_Faces::detectFace(imgRGB, rectFace))
+			return false;
 
-	imgRGB = imgRGB(rectFace);
+		imgRGB = imgRGB(rectFace);
+		if (!imgDepth.empty())
+			imgDepth = imgDepth(rectFace);
+	}
+
 	cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
-
-	imgDepth = imgDepth(rectFace);
-	cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
+	if (!imgDepth.empty())
+		cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
 
 	if (samplesType == "DLIB_LBP_RGB")
 	{
@@ -69,8 +75,28 @@ bool sample(cv::Mat &imgRGB,
 	return true;
 }
 
+
 //------------------------------------------------------------------------------
-int main(int argc, char *argv[])
+void writeSample(cv::Mat_<double> &features, 
+				const std::string &outDirName,
+				const std::string &user,
+				const std::string &attack,
+				const std::string &frame)
+{
+	std::stringstream outFileName;
+	outFileName << outDirName << "\\" << user << "_" << attack << "_" << frame << ".des";
+
+	std::cout << outFileName.str() << std::endl;
+
+	cv::FileStorage fileDes(outFileName.str().c_str(), cv::FileStorage::WRITE);
+	fileDes << "descriptor" << features;
+	fileDes.release();
+
+	//std::cout << features << std::endl;
+}
+
+//------------------------------------------------------------------------------
+/*int main_paraFicheroDeRealSense(int argc, char *argv[])
 {
 	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
@@ -102,16 +128,40 @@ int main(int argc, char *argv[])
 			std::string attack;
 			std::string frame;
 			Util_FravAttack::infoFile(fileRGB, user, attack, frame);
-			std::stringstream outFileName;
-			outFileName << outDirName << "\\" << user << "_" << attack << "_" << frame << ".des";
 
-			std::cout << outFileName.str() << std::endl;
+			writeSample(features, outDirName, user, attack, frame);
+		}
+	}
 
-			cv::FileStorage fileDes(outFileName.str().c_str(), cv::FileStorage::WRITE);
-			fileDes << "descriptor" << features;
-			fileDes.release();
+	std::getchar();
 
-			//std::cout << features << std::endl;
+	return 0;
+}
+*/
+
+//------------------------------------------------------------------------------
+int main(int argc, char *argv[])
+{
+	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
+
+	std::vector<std::string> files;
+	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
+
+	Util_Faces::init();
+
+	for (int i = 0; i < numFiles; i++)
+	{
+		std::string file = files[i];
+		cv::Mat img = cv::imread(file);
+
+		cv::Mat_<double> features;
+		if (sample(img, cv::Mat(), features, "LBP_RGB",false))
+		{
+			std::string user;
+			Util_FravAttack::infoFileUser(file, user);
+
+			writeSample(features, outDirName, user, "00", "00");
 		}
 	}
 
