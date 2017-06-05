@@ -227,7 +227,7 @@ float CamF200::isAttackFrame(cv::Mat &frameRGB, cv::Mat &frameDepth)
 
 	cv::Rect rectFace;
 	if (!Util_Faces::detectFace(frameRGB, rectFace))
-		return 0.0;
+		return -1.0;
 
 	cv::Mat imgFace = frameRGB(rectFace);
 	cv::resize(imgFace, imgFace, cv::Size(100, 100));
@@ -308,7 +308,7 @@ float CamF200::isAttackFrame()
 }
 
 //---------------------------------------------------------------------------------------
-int CamF200::isAttack()
+float CamF200::isAttack()
 {
 	int numFrames = 3;
 
@@ -318,6 +318,7 @@ int CamF200::isAttack()
 	{
 		std::cout << "frame " << i << std::endl;
 		float result = isAttackFrame();
+		
 		cv::waitKey(15);
 
 		if (result > 0.0)
@@ -335,7 +336,7 @@ int CamF200::isAttack()
 	else
 		std::cout << " = ATTACK" << std::endl;
 
-	return 0;
+	return minScore;
 }
 
 //---------------------------------------------------------------------------------------

@@ -25,7 +25,8 @@ bool Util_Faces::detectFace(const cv::Mat &img, cv::Rect &rect)
 	int newRows = img.rows*invertRatio;
 	cv::resize(img, imgGray, cv::Size(newCols, newRows));
 	cv::cvtColor(imgGray, imgGray, cv::COLOR_BGR2GRAY);
-	cv::equalizeHist(imgGray, imgGray);
+	//cv::equalizeHist(imgGray, imgGray);
+	//cv::imshow("prueba", imgGray);
 
 	//-- Detect faces
 	Util_Faces::face_cascade.detectMultiScale(imgGray, faces, 1.1, 2, 0 | cv::CASCADE_SCALE_IMAGE/*, cv::Size(newCols/5, newRows/5)*/);

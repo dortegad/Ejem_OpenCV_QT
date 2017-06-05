@@ -42,7 +42,6 @@ public:
 	~CamF200();
 	int load();
 	int init();
-	int isAttack();
+	float isAttack();
 	int stop();
 };
-

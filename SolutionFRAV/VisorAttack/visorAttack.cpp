@@ -88,26 +88,29 @@ int VisorAttack::stream()
 		if (verifyAttack)
 		{
 			float result = cam->isAttackFrame(rgbImg, depthImg);
-			attackResults.push_back(result);
-			if (attackResults.size() == numFramesAttackVerify)
-			{ 
-				std::vector<float>::iterator itMin = std::min_element(attackResults.begin(), attackResults.end());
-				float minScore = *itMin;
-				std::cout << "RESULT = " << minScore;
-				if (minScore > 0.28)
+			if (result > 0)
+			{
+				attackResults.push_back(result);
+				if (attackResults.size() == numFramesAttackVerify)
 				{
-					ui.lBonaFide->setVisible(true);
-					std::cout << " = BONA FIDE" << std::endl;
+					std::vector<float>::iterator itMin = std::min_element(attackResults.begin(), attackResults.end());
+					float minScore = *itMin;
+					std::cout << "RESULT = " << minScore;
+					if (minScore > 0.28)
+					{
+						ui.lBonaFide->setVisible(true);
+						std::cout << " = BONA FIDE" << std::endl;
 
+					}
+					else
+					{
+						ui.lAttack->setVisible(true);
+						std::cout << " = ATTACK" << std::endl;
+					}
+					framesShowResult = 10;
+					attackResults.clear();
+					verifyAttack = false;
 				}
-				else
-				{
-					ui.lAttack->setVisible(true);
-					std::cout << " = ATTACK" << std::endl;
-				}
-				framesShowResult = 10;
-				attackResults.clear();
-				verifyAttack = false;
 			}
 		}
 

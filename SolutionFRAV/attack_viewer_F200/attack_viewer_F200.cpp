@@ -14,20 +14,30 @@ int main(int argc, char* argv[])
 {
 	CamF200 cam;
 
+	//Load configuration files
 	if (cam.load() != 0)
 		return 0;
 
+	//Start camera
 	if (cam.init() != 0)
 		return 0;
 
+	//Capture frames and detect attacks
 	int frame = 0;
 	for (;; frame++)
 	{
-		cam.isAttack();
+		float result = cam.isAttack();
 
-		cv::waitKey();
+		std::cout << "RESULT = " << result;
+		if (result > 0.28)
+			std::cout << " = BONA FIDE" << std::endl;
+		else
+			std::cout << " = ATTACK" << std::endl;
+
+		std::getchar();
 	}
 
+	//Close comera stream
 	cam.stop();
 
 	return 0;

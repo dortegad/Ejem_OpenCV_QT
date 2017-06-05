@@ -29,6 +29,7 @@
 using namespace cv;
 using namespace std;
 
+//-------------------------------------------------------------------------------------------------
 // Compute similarity transform given two pairs of corresponding points.
 // OpenCV requires 3 pairs of corresponding points.
 // We are faking the third one.
@@ -56,6 +57,7 @@ void similarityTransform(std::vector<cv::Point2f>& inPoints, std::vector<cv::Poi
 }
 
 
+//----------------------------------------------------------------------------------------------
 // Read points from list of text file
 void readPoints(vector<string> pointsFileNames, vector<vector<Point2f> > &pointsVec){
 
@@ -73,6 +75,7 @@ void readPoints(vector<string> pointsFileNames, vector<vector<Point2f> > &points
 }
 
 
+//----------------------------------------------------------------------------------------------
 // Calculate Delaunay triangles for set of points
 // Returns the vector of indices of 3 points for each triangle
 static void calculateDelaunayTriangles(Rect rect, vector<Point2f> &points, vector< vector<int> > &delaunayTri){
@@ -108,6 +111,7 @@ static void calculateDelaunayTriangles(Rect rect, vector<Point2f> &points, vecto
 
 }
 
+//----------------------------------------------------------------------------------------------
 // Apply affine transform calculated using srcTri and dstTri to src
 void applyAffineTransform(Mat &warpImage, Mat &src, vector<Point2f> &srcTri, vector<Point2f> &dstTri)
 {
@@ -119,6 +123,7 @@ void applyAffineTransform(Mat &warpImage, Mat &src, vector<Point2f> &srcTri, vec
 }
 
 
+//----------------------------------------------------------------------------------------------
 // Warps and alpha blends triangular regions from img1 and img2 to img
 void warpTriangle(Mat &img1, Mat &img2, vector<Point2f> t1, vector<Point2f> t2)
 {
@@ -157,6 +162,7 @@ void warpTriangle(Mat &img1, Mat &img2, vector<Point2f> t1, vector<Point2f> t2)
 
 }
 
+//----------------------------------------------------------------------------------------------
 // Constrains points to be inside boundary
 void constrainPoint(Point2f &p, Size sz)
 {
@@ -164,7 +170,6 @@ void constrainPoint(Point2f &p, Size sz)
 	p.y = min(max((double)p.y, 0.0), (double)(sz.height - 1));
 
 }
-
 
 // ----------------------------------------------------------------------------------------
 void facePoints(cv::Mat &imgMat,
@@ -267,7 +272,7 @@ void facePoints(cv::Mat &imgMat,
 	}
 }
 
-
+//----------------------------------------------------------------------------------------------
 int main(int argc, char** argv)
 {
 	// Directory containing images.
@@ -319,8 +324,11 @@ int main(int argc, char** argv)
 	//	exit(EXIT_FAILURE);
 	//}
 	
-	string filename1(".\\mophingData\\hillary_clinton.jpg");
-	string filename2(".\\mophingData\\ted_cruz.jpg");
+	//string filename1(".\\mophingData\\hillary_clinton.jpg");
+	//string filename2(".\\mophingData\\ted_cruz.jpg");
+
+	string filename1("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\07816337.jpg");
+	string filename2("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\52873470.jpg");
 
 	//Read input images
 	Mat img1 = imread(filename1);
@@ -455,6 +463,9 @@ int main(int argc, char** argv)
 
 	// Display result
 	imshow("image", output);
+	cv::Mat output_rgb;
+	output.convertTo(output_rgb, CV_8UC3,255.0);
+	cv::imwrite("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\07816337-52873470.jpg", output_rgb);
 	waitKey(0);
 
 	return 0;
