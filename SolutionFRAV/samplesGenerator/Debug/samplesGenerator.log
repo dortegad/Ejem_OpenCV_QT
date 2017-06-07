@@ -1,4 +1,4 @@
-﻿Build started 26/05/2017 11:21:36.
+﻿Build started 06/06/2017 14:52:06.
      1>Project "C:\WORKS\FRAV\SolutionFRAV\samplesGenerator\samplesGenerator.vcxproj" on node 2 (Rebuild target(s)).
      1>ClCompile:
          C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"C:\opencv-3.2.0\build\install\include" /I"C:\dlib-19.1" /IC:\WORKS\FRAV\SolutionFRAV\\common /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\samplesGenerator.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -11,7 +11,7 @@
          util_faces.cpp
      1>c:\works\frav\solutionfrav\common\util_faces.cpp(24): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
      1>c:\works\frav\solutionfrav\common\util_faces.cpp(25): warning C4244: 'initializing' : conversion from 'float' to 'int', possible loss of data
-     1>c:\works\frav\solutionfrav\common\util_faces.cpp(37): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
+     1>c:\works\frav\solutionfrav\common\util_faces.cpp(38): warning C4244: 'argument' : conversion from 'float' to 'int', possible loss of data
          util_depth.cpp
          Generating Code...
        Link:
@@ -27,4 +27,4 @@
 
 Build succeeded.
 
-Time Elapsed 00:00:12.00
+Time Elapsed 00:00:15.94

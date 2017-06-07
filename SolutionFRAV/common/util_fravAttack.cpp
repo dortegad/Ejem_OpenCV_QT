@@ -107,7 +107,7 @@ int Util_FravAttack::readSamplesFiles(const std::string &fileImgs,
 			line << sSamples.c_str();
 			files.push_back(line.str());
 
-			std::cout << line.str() << std::endl;
+			//std::cout << line.str() << std::endl;
 		}
 	}
 	imgsFile.close();

@@ -284,7 +284,7 @@ int main(int argc, char** argv)
 
 	// Dimensions of output image
 	int w = 600;
-	int h = 600;
+	int h = 1000;
 
 	// Read images in the directory
 	//vector<string> imageNames, ptsNames;
@@ -354,6 +354,9 @@ int main(int argc, char** argv)
 	vector<Point2f> eyecornerDst, eyecornerSrc;
 	eyecornerDst.push_back(Point2f(0.3*w, h / 3));
 	eyecornerDst.push_back(Point2f(0.7*w, h / 3));
+
+	//eyecornerDst.push_back(Point2f(0.3*w, h / 2));
+	//eyecornerDst.push_back(Point2f(0.7*w, h / 2));
 
 	eyecornerSrc.push_back(Point2f(0, 0));
 	eyecornerSrc.push_back(Point2f(0, 0));
