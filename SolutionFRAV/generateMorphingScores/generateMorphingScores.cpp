@@ -144,11 +144,17 @@ void writeSample(cv::Mat_<double> &features,
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-	std::string fileImgs = /*argv[1];*/ "D:\\MORPH\\files_for_verify_morph_scores.txt";
-	std::string resultFile = /*argv[1];*/ "D:\\MORPH\\files_for_verify_morph_scores_COGNITED_AND_SVM_LBP_MORPHING.txt";
-	//std::string fileImgs = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES.txt";
-	//std::string resultFile = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_COGNITEG_SVM_LBP_MORPHING.txt";
-	std::string svmFile = /*argv[2];*/ ".\\SVM_LBP_RGB\\svm_attack_06.svm";
+	//LOS FICHEROS DE MORPHING
+	//bool segFaces = true;
+	//std::string fileImgs = /*argv[1];*/ "D:\\MORPH\\files_for_verify_morph_scores.txt";
+	//std::string resultFile = /*argv[1];*/ "D:\\MORPH\\files_for_verify_morph_scores_COGNITED_AND_SVM_LBP_MORPHING.txt";
+
+	//LOS FICHEROS DE FRAV_ATTACK LOS DE REAL_SENSENSE
+	bool segFaces = false;
+	std::string fileImgs = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_TEMP.txt";
+	std::string resultFile = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_COGNITEG_SVM_LBP_MORPHING_TEMP.txt";
+	
+	std::string svmFile = /*argv[2];*/ ".\\SVM_LBP_RGB_NEW\\svm_attack_06.svm";
 
 	std::vector<std::string> files;
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
@@ -171,7 +177,7 @@ int main(int argc, char *argv[])
 
 		cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::load(svmFile);
 		cv::Mat_<double> features;
-		if (sample(img, cv::Mat(), features, "LBP_RGB",true))
+		if (sample(img, cv::Mat(), features, "LBP_RGB", segFaces))
 		{
 			float result = svm->predict(features, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 			float confidence = 1.0 / (1.0 + exp(-result));

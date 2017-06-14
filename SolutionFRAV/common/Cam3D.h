@@ -40,6 +40,6 @@ public:
 	int stop();
 
 	cv::Mat capture(ImgType imgType = RGB,
-			ImgAdjustType imgAdjustType = ADJUST_RGB);
+				ImgAdjustType imgAdjustType = ADJUST_RGB);
 };
 

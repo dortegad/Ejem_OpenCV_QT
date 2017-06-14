@@ -3,6 +3,6 @@
 
 class Util_Files
 {
-public: static int filesDIR(const std::string &dirPath, std::vector<std::string> &files);
+public: static int filesDIR(const std::string &dirPath, std::vector<std::string> &files, const std::string &extension);
 };
 

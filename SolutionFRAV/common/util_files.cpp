@@ -5,9 +5,9 @@
 #include <Windows.h>
 
 //------------------------------------------------------------------------------
-int Util_Files::filesDIR(const std::string &dirPath, std::vector<std::string> &files)
+int Util_Files::filesDIR(const std::string &dirPath, std::vector<std::string> &files, const std::string &extension)
 {
-	std::string dirFind = dirPath +  "*.des";
+	std::string dirFind = dirPath +  extension;
 	std::wstring stemp(dirFind.begin(), dirFind.end());
 
 	HANDLE hFind;

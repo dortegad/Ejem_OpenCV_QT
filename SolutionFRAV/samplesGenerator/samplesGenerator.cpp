@@ -5,6 +5,7 @@
 #include "opencv2\core\core.hpp"
 #include "opencv2\highgui\highgui.hpp"
 #include "opencv2\imgproc\imgproc.hpp"
+#include "opencv2\video\video.hpp"
 
 
 /*
@@ -24,6 +25,7 @@
 
 
 #include <util_faces.h>
+#include <util_eyes.h>
 #include <util_depth.h>
 #include <util_LBP_Dlib.h>
 #include <util_LBP_CV.h>
@@ -47,29 +49,48 @@ bool sample(cv::Mat &imgRGB,
 			imgDepth = imgDepth(rectFace);
 	}
 
-	cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
-	if (!imgDepth.empty())
-		cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
 
-	if (samplesType == "DLIB_LBP_RGB")
+	if (samplesType == "LBP_RGB_EYES")
 	{
-		Util_LBP_Dlib::LBP_RGB(imgRGB, features);
-	}
-	else if (samplesType == "DLIB_LBP_DEPTH")
-	{
-		Util_LBP_Dlib::LBP_Depth(imgDepth, features);
-	}
-	else if (samplesType == "LBP_RGB")
-	{
-		Util_LBP_CV::LBP_RGB(imgRGB, features);
-	}
-	else if(samplesType == "LBP_DEPTH")
-	{
-		Util_LBP_CV::LBP_Depth(imgDepth, features);
+		cv::Rect eye1;
+		cv::Rect eye2;
+		bool detect = Util_Eyes::detectEyes(imgRGB, eye1, eye2);
+		if (detect)
+		{
+			cv::rectangle(imgRGB, eye1, cv::Scalar(0, 0, 255), 3);
+			cv::rectangle(imgRGB, eye2, cv::Scalar(0, 0, 255), 3);
+		}
+		cv::imshow("eyes", imgRGB);
+		cv::waitKey();
+
+		return detect;
 	}
 	else
 	{
-		return false;
+		cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
+		if (!imgDepth.empty())
+			cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
+
+		if (samplesType == "DLIB_LBP_RGB")
+		{
+			Util_LBP_Dlib::LBP_RGB(imgRGB, features);
+		}
+		else if (samplesType == "DLIB_LBP_DEPTH")
+		{
+			Util_LBP_Dlib::LBP_Depth(imgDepth, features);
+		}
+		else if (samplesType == "LBP_RGB")
+		{
+			Util_LBP_CV::LBP_RGB(imgRGB, features);
+		}
+		else if (samplesType == "LBP_DEPTH")
+		{
+			Util_LBP_CV::LBP_Depth(imgDepth, features);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	return true;
@@ -95,8 +116,52 @@ void writeSample(cv::Mat_<double> &features,
 	//std::cout << features << std::endl;
 }
 
+/*PARA COPIAR UNOS FICHERO A UN DIRECTORIO
 //------------------------------------------------------------------------------
-/*int main_paraFicheroDeRealSense(int argc, char *argv[])
+int main(int argc, char *argv[])
+{
+std::string fileImgs = "E:\\MORPH\\files_morph_one_per_user.txt";
+std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
+
+std::vector<std::string> files;
+int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
+
+for (int i = 0; i < numFiles; i++)
+{
+	std::string fileRGB = files[i];
+	cv::Mat imgRGB = cv::imread(fileRGB);
+
+	std::string fileName = fileRGB.substr(fileRGB.length() - 16, fileRGB.length());
+	std::stringstream fileOut;
+	fileOut << outDirName << "\\" << fileName;
+	std::cout << fileOut.str().c_str() << std::endl;
+
+	cv::imwrite(fileOut.str().c_str(), imgRGB);
+}
+
+std::getchar();
+}
+*/
+
+/* PARA VER UN VIDEO
+//------------------------------------------------------------------------------
+int main(int argc, char *argv[])
+{
+	cv::VideoCapture cap;
+	cap.open("C:\\r.avi");
+
+	while (true)
+	{
+		cv::Mat img;
+		cap >> img;
+		cv::imshow("video", img);
+		cv::waitKey();
+	}
+}
+*/
+
+//------------------------------------------------------------------------------
+int main_OLD(int argc, char *argv[])
 {
 	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
@@ -108,6 +173,7 @@ void writeSample(cv::Mat_<double> &features,
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, filesDepth, filesRGB, filesIR);
 
 	Util_Faces::init();
+	Util_Eyes::init();
 
 	for (int i = 0; i < numFiles; i++)
 	{
@@ -133,12 +199,13 @@ void writeSample(cv::Mat_<double> &features,
 		}
 	}
 
-	std::getchar();
+	//std::getchar();
 
 	return 0;
 }
-*/
 
+
+/*
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
@@ -149,6 +216,7 @@ int main(int argc, char *argv[])
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
 
 	Util_Faces::init();
+	Util_Eyes::init();
 
 	for (int i = 0; i < numFiles; i++)
 	{
@@ -156,7 +224,7 @@ int main(int argc, char *argv[])
 		cv::Mat img = cv::imread(file);
 
 		cv::Mat_<double> features;
-		if (sample(img, cv::Mat(), features, "LBP_RGB",false))
+		if (sample(img, cv::Mat(), features, "LBP_RGB",true))
 		{
 			std::string user;
 			Util_FravAttack::infoFileUser(file, user);
@@ -169,4 +237,5 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+*/
 

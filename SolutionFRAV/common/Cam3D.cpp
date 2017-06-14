@@ -422,7 +422,7 @@ cv::Mat Cam3D::captureAdjustDepth(PXCCapture::Device *device,
 
 //---------------------------------------------------------------------------------------
 cv::Mat Cam3D::capture(ImgType imgType,
-				   ImgAdjustType imgAdjustType)
+				    ImgAdjustType imgAdjustType)
 {
 	// Reset all properties
 	PXCCapture::Device *device = pp->QueryCaptureManager()->QueryDevice();

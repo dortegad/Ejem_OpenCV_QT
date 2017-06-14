@@ -26,6 +26,8 @@
 #define _USE_MATH_DEFINES
 #include <math.h>
 
+#include "util_files.h"
+
 using namespace cv;
 using namespace std;
 
@@ -171,8 +173,11 @@ void constrainPoint(Point2f &p, Size sz)
 
 }
 
+
+dlib::frontal_face_detector detector;
+dlib::shape_predictor sp;
 // ----------------------------------------------------------------------------------------
-void facePoints(cv::Mat &imgMat,
+void facePoints(cv::Mat &img,
 	std::vector<cv::Point2f> &points)
 {
 	try
@@ -192,16 +197,16 @@ void facePoints(cv::Mat &imgMat,
 
 		// We need a face detector.  We will use this to get bounding boxes for
 		// each face in an image.
-		dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
+		//dlib::frontal_face_detector detector = dlib::get_frontal_face_detector();
 		// And we also need a shape_predictor.  This is the tool that will predict face
 		// landmark positions given an image and face bounding box.  Here we are just
 		// loading the model from the shape_predictor_68_face_landmarks.dat file you gave
 		// as a command line argument.
-		dlib::shape_predictor sp;
-		dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+		//dlib::shape_predictor sp;
+		//dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
 
 
-		dlib::image_window win, win_faces;
+		//dlib::image_window win, win_faces;
 		// Loop over all the images provided on the command line.
 		//for (int i = 2; i < argc; ++i)
 		//{
@@ -210,6 +215,10 @@ void facePoints(cv::Mat &imgMat,
 		//array2d<rgb_pixel> img;
 		//load_image(img, argv[i]);
 		//	cv::Mat imgMat = cv::imread(argv[i]);
+
+		float inv = 3;
+		cv::Mat imgMat;
+		cv::resize(img, imgMat, cv::Size(img.cols/inv,img.rows/inv));
 		dlib::cv_image<dlib::bgr_pixel> img(imgMat);
 
 		// Now tell the face detector to give us a list of bounding boxes
@@ -246,7 +255,9 @@ void facePoints(cv::Mat &imgMat,
 			for (unsigned long k = 0; k < shape.num_parts(); ++k)
 			{
 				std::cout << shape.part(k).x() << " " << shape.part(k).y() << endl;
-				points.push_back(cv::Point2f(shape.part(k).x(), shape.part(k).y()));
+				double x = shape.part(k).x()*inv;
+				double y = shape.part(k).y()*inv;
+				points.push_back(cv::Point2f(x,y));
 			}
 			//ofs.close();
 			//render_face(imgMat, shape);
@@ -273,64 +284,15 @@ void facePoints(cv::Mat &imgMat,
 }
 
 //----------------------------------------------------------------------------------------------
-int main(int argc, char** argv)
+int morphing(const std::string filename1, const std::string filename2, cv::Mat &outputImg)
 {
-	// Directory containing images.
-	//string dirName = "presidents";
-
-	// Add slash to directory name if missing
-	//if (!dirName.empty() && dirName.back() != '/')
-	//	dirName += '/';
-
-	// Dimensions of output image
 	int w = 600;
-	int h = 1000;
+	int h = 800;
 
-	// Read images in the directory
-	//vector<string> imageNames, ptsNames;
-	//readFileNames(dirName, imageNames, ptsNames);
-
-	// Exit program if no images or pts are found or if the number of image files does not match with the number of point files
-	//if (imageNames.empty() || ptsNames.empty() || imageNames.size() != ptsNames.size())
-	//	exit(EXIT_FAILURE);
-
-	// Read points
 	vector<vector<Point2f> > allPoints;
-	//readPoints(ptsNames, allPoints);
-
-	//int n = allPoints[0].size();
-
-	// Read images
-	vector<Mat> images;
-	//for (size_t i = 0; i < imageNames.size(); i++)
-	//{
-	//	Mat img = imread(imageNames[i]);
-
-//		img.convertTo(img, CV_32FC3, 1 / 255.0);
-
-	//	if (!img.data)
-	//	{
-	//		cout << "image " << imageNames[i] << " not read properly" << endl;
-	//	}
-	//	else
-	//	{
-	//		images.push_back(img);
-	//	}
-	//}
-
-	//if (images.empty())
-	//{
-	//	cout << "No images found " << endl;
-	//	exit(EXIT_FAILURE);
-	//}
 	
-	//string filename1(".\\mophingData\\hillary_clinton.jpg");
-	//string filename2(".\\mophingData\\ted_cruz.jpg");
-
-	string filename1("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\07816337.jpg");
-	string filename2("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\52873470.jpg");
-
-	//Read input images
+	vector<Mat> images;
+	
 	Mat img1 = imread(filename1);
 	Mat img2 = imread(filename2);
 
@@ -349,14 +311,10 @@ int main(int argc, char** argv)
 
 	int numImages = images.size();
 
-
 	// Eye corners
 	vector<Point2f> eyecornerDst, eyecornerSrc;
-	eyecornerDst.push_back(Point2f(0.3*w, h / 3));
-	eyecornerDst.push_back(Point2f(0.7*w, h / 3));
-
-	//eyecornerDst.push_back(Point2f(0.3*w, h / 2));
-	//eyecornerDst.push_back(Point2f(0.7*w, h / 2));
+	eyecornerDst.push_back(Point2f(0.3*w, h/2));
+	eyecornerDst.push_back(Point2f(0.7*w, h/2));
 
 	eyecornerSrc.push_back(Point2f(0, 0));
 	eyecornerSrc.push_back(Point2f(0, 0));
@@ -463,13 +421,68 @@ int main(int argc, char** argv)
 
 	// Divide by numImages to get average
 	output = output / (double)numImages;
-
-	// Display result
-	imshow("image", output);
-	cv::Mat output_rgb;
-	output.convertTo(output_rgb, CV_8UC3,255.0);
-	cv::imwrite("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\07816337-52873470.jpg", output_rgb);
-	waitKey(0);
+	output.convertTo(outputImg, CV_8UC3,255.0);
 
 	return 0;
+}
+
+
+//----------------------------------------------------------------------------------------------
+int main(int argc, char** argv)
+{
+	// We need a face detector.  We will use this to get bounding boxes for
+	// each face in an image.
+	detector = dlib::get_frontal_face_detector();
+	// And we also need a shape_predictor.  This is the tool that will predict face
+	// landmark positions given an image and face bounding box.  Here we are just
+	// loading the model from the shape_predictor_68_face_landmarks.dat file you gave
+	// as a command line argument.
+	dlib::deserialize("shape_predictor_68_face_landmarks.dat") >> sp;
+
+	//string filename1(".\\mophingData\\hillary_clinton.jpg");
+	//string filename2(".\\mophingData\\ted_cruz.jpg");
+
+	//string filename1("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\07816337.jpg");
+	//string filename2("D:\\MORPH\\PRUEBAS\\DGP-POLICIA\\52873470.jpg");
+
+
+	//string filename1("F:\\IMPRIMIR\\CAMISETAS\\FRENTE_01.jpg");
+	//string filename2("F:\\IMPRIMIR\\CAMISETAS\\FRENTE_02.jpg");
+
+	/*
+	std::string filename1("E:\\DB_FINAL\\SONY\\crop\\from\\users");
+	std::string filename2("E:\\DB_FINAL\\SONY\\crop\\from\\users\\USUARIO_001.jpg");
+	cv::Mat img;
+	morphing(filename1, filename2,img);
+	imshow("image", img);
+	cv::waitKey();
+	*/
+
+	std::string dir = "E:\\MORPH\\USERS\\";
+	std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
+
+	std::vector<std::string> files;
+	int numFiles = Util_Files::filesDIR(dir, files,"*.jpg");
+
+	for (int i=0; i<numFiles; i++)
+	{
+		for (int j=0; j<numFiles; j++)
+		{
+			cv::Mat img;
+			morphing(files[i],files[j],img);
+			imshow("image", img);
+			cv::waitKey();
+		}
+		/*
+		std::string fileRGB = files[i];
+		cv::Mat imgRGB = cv::imread(fileRGB);
+
+		std::string fileName = fileRGB.substr(fileRGB.length() - 16, fileRGB.length());
+		std::stringstream fileOut;
+		fileOut << outDirName << "\\" << fileName;
+		std::cout << fileOut.str().c_str() << std::endl;
+
+		cv::imwrite(fileOut.str().c_str(), imgRGB);
+		*/
+	}
 }
