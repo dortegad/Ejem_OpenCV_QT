@@ -224,7 +224,7 @@ void facePoints(cv::Mat &img,
 		// Now tell the face detector to give us a list of bounding boxes
 		// around all the faces in the image.
 		std::vector<dlib::rectangle> dets = detector(img);
-		cout << "Number of faces detected: " << dets.size() << endl;
+		//cout << "Number of faces detected: " << dets.size() << endl;
 
 		// Now we will go ask the shape_predictor to tell us the pose of
 		// each face we detected.
@@ -254,7 +254,7 @@ void facePoints(cv::Mat &img,
 			const dlib::full_object_detection& d = shapes[0];
 			for (unsigned long k = 0; k < shape.num_parts(); ++k)
 			{
-				std::cout << shape.part(k).x() << " " << shape.part(k).y() << endl;
+				//std::cout << shape.part(k).x() << " " << shape.part(k).y() << endl;
 				double x = shape.part(k).x()*inv;
 				double y = shape.part(k).y()*inv;
 				points.push_back(cv::Point2f(x,y));
@@ -458,31 +458,36 @@ int main(int argc, char** argv)
 	cv::waitKey();
 	*/
 
-	std::string dir = "E:\\MORPH\\USERS\\";
-	std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
+	//std::string dir = "E:\\MORPH\\USERS\\";
+	//std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
+
+	std::string dir = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
 
 	std::vector<std::string> files;
 	int numFiles = Util_Files::filesDIR(dir, files,"*.jpg");
 
 	for (int i=0; i<numFiles; i++)
 	{
+		char numberUserA[3];
+		sprintf(numberUserA, "%03d", i);
+		std::stringstream outDirUserA;
+		outDirUserA << outDirName << "\\" << "USER_" << numberUserA;
+		Util_Files::createDIR(outDirUserA.str().c_str());
 		for (int j=0; j<numFiles; j++)
 		{
 			cv::Mat img;
 			morphing(files[i],files[j],img);
-			imshow("image", img);
-			cv::waitKey();
+			//imshow("image", img);
+			//cv::waitKey();
+
+			char numberUserB[3];
+			sprintf(numberUserB, "%03d", j);
+			std::stringstream fileName;
+			fileName << outDirUserA.str().c_str() << "\\" << "USER_" << numberUserA << "_" << numberUserB << ".jpg";
+			cv::imwrite(fileName.str(), img);
+
+			std::cout << fileName.str().c_str() << std::endl;
 		}
-		/*
-		std::string fileRGB = files[i];
-		cv::Mat imgRGB = cv::imread(fileRGB);
-
-		std::string fileName = fileRGB.substr(fileRGB.length() - 16, fileRGB.length());
-		std::stringstream fileOut;
-		fileOut << outDirName << "\\" << fileName;
-		std::cout << fileOut.str().c_str() << std::endl;
-
-		cv::imwrite(fileOut.str().c_str(), imgRGB);
-		*/
 	}
 }

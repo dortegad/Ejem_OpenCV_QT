@@ -5,8 +5,12 @@
 #include <Windows.h>
 
 //------------------------------------------------------------------------------
-int Util_Files::filesDIR(const std::string &dirPath, std::vector<std::string> &files, const std::string &extension)
+int Util_Files::filesDIR(const std::string &dir, std::vector<std::string> &files, const std::string &extension)
 {
+	std::string dirPath = dir;
+	if (dirPath[dirPath.length()] != '\\')
+		dirPath = dirPath + "\\";
+	
 	std::string dirFind = dirPath +  extension;
 	std::wstring stemp(dirFind.begin(), dirFind.end());
 
@@ -26,4 +30,10 @@ int Util_Files::filesDIR(const std::string &dirPath, std::vector<std::string> &f
 	}
 	
 	return files.size();
+}
+
+//------------------------------------------------------------------------------
+bool Util_Files::createDIR(const std::string &dirPath)
+{
+	return CreateDirectoryA(dirPath.c_str(),NULL);
 }
