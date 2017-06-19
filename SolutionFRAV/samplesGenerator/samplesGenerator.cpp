@@ -22,6 +22,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <vector>
 
 
 #include <util_faces.h>
@@ -57,8 +58,22 @@ bool sample(cv::Mat &imgRGB,
 		bool detect = Util_Eyes::detectEyes(imgRGB, eye1, eye2);
 		if (detect)
 		{
-			cv::rectangle(imgRGB, eye1, cv::Scalar(0, 0, 255), 3);
-			cv::rectangle(imgRGB, eye2, cv::Scalar(0, 0, 255), 3);
+			cv::Size sizeEyes(50, 50);
+			cv::Mat eyeImg1 = imgRGB(eye1);
+			cv::Mat eyeImg2 = imgRGB(eye2);
+			cv::resize(eyeImg1, eyeImg1, sizeEyes);
+			cv::resize(eyeImg2, eyeImg2, sizeEyes);
+			cv::Mat_<double> featuresEye1;
+			cv::Mat_<double> featuresEye2;
+			Util_LBP_Dlib::LBP_RGB(eyeImg1, featuresEye1);
+			Util_LBP_Dlib::LBP_RGB(eyeImg2, featuresEye2);
+
+			cv::hconcat(featuresEye1, featuresEye2, features);
+
+			cv::rectangle(imgRGB, eye1, cv::Scalar(0, 0, 255), 2);
+			cv::rectangle(imgRGB, eye2, cv::Scalar(0, 0, 255), 2);
+			cv::imshow("eye 1", eyeImg1);
+			cv::imshow("eye 2", eyeImg2);
 		}
 		cv::imshow("eyes", imgRGB);
 		cv::waitKey();
@@ -161,7 +176,7 @@ int main(int argc, char *argv[])
 */
 
 //------------------------------------------------------------------------------
-int main_OLD(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
 	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
@@ -195,7 +210,7 @@ int main_OLD(int argc, char *argv[])
 			std::string frame;
 			Util_FravAttack::infoFile(fileRGB, user, attack, frame);
 
-			writeSample(features, outDirName, user, attack, frame);
+			//writeSample(features, outDirName, user, attack, frame);
 		}
 	}
 

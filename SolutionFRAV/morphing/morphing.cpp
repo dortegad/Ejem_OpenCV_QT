@@ -462,13 +462,26 @@ int main(int argc, char** argv)
 	//std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
 
 	std::string dir = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string first = argv[2];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
 
 	std::vector<std::string> files;
 	int numFiles = Util_Files::filesDIR(dir, files,"*.jpg");
 
+	bool findFirst = false;
 	for (int i=0; i<numFiles; i++)
 	{
+		if (!findFirst)
+		{
+			if (files[i] == first)
+			{
+				findFirst = true;
+			}
+			else
+			{
+				continue;
+			}
+		}
 		char numberUserA[3];
 		sprintf(numberUserA, "%03d", i);
 		std::stringstream outDirUserA;
