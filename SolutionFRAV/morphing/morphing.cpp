@@ -462,20 +462,22 @@ int main(int argc, char** argv)
 	//std::string outDirName = "E:\\MORPH\\FRAV_MORPH_ONE_PER_USER";
 
 	std::string dir = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
-	std::string first = argv[2];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
-	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
+	std::string firstA = argv[2];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string firstB = argv[3];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
+	std::string outDirName = argv[4]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
 
 	std::vector<std::string> files;
 	int numFiles = Util_Files::filesDIR(dir, files,"*.jpg");
 
-	bool findFirst = false;
+	bool findFirstA = false;
+	bool findFirstB = false;
 	for (int i=0; i<numFiles; i++)
 	{
-		if (!findFirst)
+		if (!findFirstA)
 		{
-			if (files[i] == first)
+			if (files[i] == firstA)
 			{
-				findFirst = true;
+				findFirstA = true;
 			}
 			else
 			{
@@ -489,6 +491,17 @@ int main(int argc, char** argv)
 		Util_Files::createDIR(outDirUserA.str().c_str());
 		for (int j=0; j<numFiles; j++)
 		{
+			if (!findFirstB)
+			{
+				if (files[j] == firstB)
+				{
+					findFirstB = true;
+				}
+				else
+				{
+					continue;
+				}
+			}
 			cv::Mat img;
 			morphing(files[i],files[j],img);
 			//imshow("image", img);
