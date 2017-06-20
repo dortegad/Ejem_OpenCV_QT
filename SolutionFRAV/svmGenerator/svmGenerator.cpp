@@ -11,10 +11,6 @@
 #include <sstream>
 #include <string>
 
-#include <util_faces.h>
-#include <util_depth.h>
-#include <util_LBP_Dlib.h>
-#include <util_LBP_CV.h>
 #include <util_files.h>
 #include <util_fravAttack.h>
 #include <util_SVM.h>
@@ -46,7 +42,7 @@ int main(int argc, char *argv[])
 	std::string descriptorDIR = argv[1];// "D:\\DESCRIPTORS_PRUEBA\\";
 	std::vector <std::string> files;
 
-	Util_Files::filesDIR(descriptorDIR, files);
+	Util_Files::filesDIR(descriptorDIR, files, "*.des");
 
 	std::vector<std::string> filesAttack_00;
 	Util_FravAttack::filesAttack(files, "00", filesAttack_00);

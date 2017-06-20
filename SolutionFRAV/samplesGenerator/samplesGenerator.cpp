@@ -50,35 +50,13 @@ bool sample(cv::Mat &imgRGB,
 			imgDepth = imgDepth(rectFace);
 	}
 
-
-	if (samplesType == "LBP_RGB_EYES")
+	if (samplesType == "LBP_RGB_HAIR")
 	{
-		cv::Rect eye1;
-		cv::Rect eye2;
-		bool detect = Util_Eyes::detectEyes(imgRGB, eye1, eye2);
-		if (detect)
-		{
-			cv::Size sizeEyes(50, 50);
-			cv::Mat eyeImg1 = imgRGB(eye1);
-			cv::Mat eyeImg2 = imgRGB(eye2);
-			cv::resize(eyeImg1, eyeImg1, sizeEyes);
-			cv::resize(eyeImg2, eyeImg2, sizeEyes);
-			cv::Mat_<double> featuresEye1;
-			cv::Mat_<double> featuresEye2;
-			Util_LBP_Dlib::LBP_RGB(eyeImg1, featuresEye1);
-			Util_LBP_Dlib::LBP_RGB(eyeImg2, featuresEye2);
-
-			cv::hconcat(featuresEye1, featuresEye2, features);
-
-			cv::rectangle(imgRGB, eye1, cv::Scalar(0, 0, 255), 2);
-			cv::rectangle(imgRGB, eye2, cv::Scalar(0, 0, 255), 2);
-			cv::imshow("eye 1", eyeImg1);
-			cv::imshow("eye 2", eyeImg2);
-		}
-		cv::imshow("eyes", imgRGB);
-		cv::waitKey();
-
-		return detect;
+		return (Util_LBP_CV::LBP_RGB_Hair(imgRGB, features) != 0);
+	}
+	else if (samplesType == "LBP_RGB_EYES")
+	{
+		return (Util_LBP_CV::LBP_RGB_Eyes(imgRGB,features) != 0);
 	}
 	else
 	{
@@ -175,6 +153,7 @@ int main(int argc, char *argv[])
 }
 */
 
+/*
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
@@ -218,9 +197,10 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
+*/
 
 
-/*
+
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
@@ -239,12 +219,12 @@ int main(int argc, char *argv[])
 		cv::Mat img = cv::imread(file);
 
 		cv::Mat_<double> features;
-		if (sample(img, cv::Mat(), features, "LBP_RGB",true))
+		if (sample(img, cv::Mat(), features, "LBP_RGB_HAIR",true))
 		{
-			std::string user;
-			Util_FravAttack::infoFileUser(file, user);
+			//std::string user;
+			//Util_FravAttack::infoFileUser(file, user);
 
-			writeSample(features, outDirName, user, "00", "00");
+			//writeSample(features, outDirName, user, "00", "00");
 		}
 	}
 
@@ -252,5 +232,4 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-*/
 

@@ -91,12 +91,8 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\common\util_depth.cpp" />
-    <ClCompile Include="..\common\util_faces.cpp" />
     <ClCompile Include="..\common\util_files.cpp" />
     <ClCompile Include="..\common\util_fravAttack.cpp" />
-    <ClCompile Include="..\common\util_LBP_CV.cpp" />
-    <ClCompile Include="..\common\util_LBP_Dlib.cpp" />
     <ClCompile Include="morphing.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

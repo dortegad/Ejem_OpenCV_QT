@@ -29,18 +29,6 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\common\util_faces.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\util_depth.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\util_LBP_Dlib.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\common\util_LBP_CV.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="svmGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
