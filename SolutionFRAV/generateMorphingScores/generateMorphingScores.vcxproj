@@ -92,6 +92,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\common\util_depth.cpp" />
+    <ClCompile Include="..\common\util_eyes.cpp" />
     <ClCompile Include="..\common\util_faces.cpp" />
     <ClCompile Include="..\common\util_fravAttack.cpp" />
     <ClCompile Include="..\common\util_LBP_CV.cpp" />

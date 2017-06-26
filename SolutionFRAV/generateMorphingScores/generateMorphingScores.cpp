@@ -26,6 +26,7 @@
 
 
 #include <util_faces.h>
+#include <util_eyes.h>
 #include <util_depth.h>
 #include <util_LBP_Dlib.h>
 #include <util_LBP_CV.h>
@@ -34,7 +35,7 @@
 //------------------------------------------------------------------------------
 bool sample(cv::Mat &imgRGB,
 	cv::Mat &imgDepth,
-	cv::Mat_<double> &features,
+	cv::Mat &features,
 	const std::string &samplesType,
 	bool segFace = true)
 {
@@ -49,36 +50,51 @@ bool sample(cv::Mat &imgRGB,
 			imgDepth = imgDepth(rectFace);
 	}
 
-	cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
-	if (!imgDepth.empty())
-		cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
-
-	if (samplesType == "DLIB_LBP_RGB")
+	if (samplesType == "LBP_RGB_EYES_HAIR")
 	{
-		Util_LBP_Dlib::LBP_RGB(imgRGB, features);
+		return (Util_LBP_CV::LBP_RGB_Eyes_Hair(imgRGB, features) != 0);
 	}
-	else if (samplesType == "DLIB_LBP_DEPTH")
+	else if (samplesType == "LBP_RGB_HAIR")
 	{
-		Util_LBP_Dlib::LBP_Depth(imgDepth, features);
+		return (Util_LBP_CV::LBP_RGB_Hair(imgRGB, features) != 0);
 	}
-	else if (samplesType == "LBP_RGB")
+	else if (samplesType == "LBP_RGB_EYES")
 	{
-		Util_LBP_CV::LBP_RGB(imgRGB, features);
-	}
-	else if(samplesType == "LBP_DEPTH")
-	{
-		Util_LBP_CV::LBP_Depth(imgDepth, features);
+		return (Util_LBP_CV::LBP_RGB_Eyes(imgRGB, features) != 0);
 	}
 	else
 	{
-		return false;
+		cv::resize(imgRGB, imgRGB, cv::Size(100, 100));
+		if (!imgDepth.empty())
+			cv::resize(imgDepth, imgDepth, cv::Size(100, 100));
+
+		if (samplesType == "DLIB_LBP_RGB")
+		{
+			Util_LBP_Dlib::LBP_RGB(imgRGB, features);
+		}
+		else if (samplesType == "DLIB_LBP_DEPTH")
+		{
+			Util_LBP_Dlib::LBP_Depth(imgDepth, features);
+		}
+		else if (samplesType == "LBP_RGB")
+		{
+			Util_LBP_CV::LBP_RGB(imgRGB, features);
+		}
+		else if (samplesType == "LBP_DEPTH")
+		{
+			Util_LBP_CV::LBP_Depth(imgDepth, features);
+		}
+		else
+		{
+			return false;
+		}
 	}
 
 	return true;
 }
 
 
-//------------------------------------------------------------------------------
+/*------------------------------------------------------------------------------
 void writeSample(cv::Mat_<double> &features, 
 				const std::string &outDirName,
 				const std::string &user,
@@ -96,9 +112,10 @@ void writeSample(cv::Mat_<double> &features,
 
 	//std::cout << features << std::endl;
 }
+*/
 
-//------------------------------------------------------------------------------
-/*int main_paraFicheroDeRealSense(int argc, char *argv[])
+/*------------------------------------------------------------------------------
+int main_paraFicheroDeRealSense(int argc, char *argv[])
 {
 	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
 	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
@@ -150,16 +167,22 @@ int main(int argc, char *argv[])
 	//std::string resultFile = /*argv[1];*/ "D:\\MORPH\\files_for_verify_morph_scores_COGNITED_AND_SVM_LBP_MORPHING.txt";
 
 	//LOS FICHEROS DE FRAV_ATTACK LOS DE REAL_SENSENSE
-	bool segFaces = false;
-	std::string fileImgs = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_TEMP.txt";
-	std::string resultFile = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_COGNITEG_SVM_LBP_MORPHING_TEMP.txt";
+	//bool segFaces = false;
+	//std::string fileImgs = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_TEMP.txt";
+	//std::string resultFile = "D:\\MORPH\\RESULTADOS\\RS_faces_viola_files_scores_000_016_SOLO_USARIOS_NO_ATAQUES_COGNITEG_SVM_LBP_MORPHING_TEMP.txt";
 	
-	std::string svmFile = /*argv[2];*/ ".\\SVM_LBP_RGB_NEW\\svm_attack_06.svm";
+	//LOS FICHETOS DE MORPHIN SCANEADOS
+	bool segFaces = true;
+	std::string fileImgs   = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_GENUINOS_MORPHING_CARNET.txt";
+	std::string resultFile = "E:\\MORPH\\SCAN\\SCAN_RESULT_LBP_EYES_HAIR_GENUINOS_MORPHING_CARNET.txt";
+
+	std::string svmFile = "E:\\MORPH\\DESCRIPTORES\\DIGITAL_MORPH\\LBP_CV_EYES_HAIR\\SAMPLES\\svm_attack_06.svm";
 
 	std::vector<std::string> files;
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
 
 	Util_Faces::init();
+	Util_Eyes::init();
 	std::ofstream outFile(resultFile.c_str(), std::ofstream::out);
 
 	for (int i = 0; i < numFiles; i++)
@@ -176,17 +199,23 @@ int main(int argc, char *argv[])
 		cv::Mat img = cv::imread(file);
 
 		cv::Ptr<cv::ml::SVM> svm = cv::ml::SVM::load(svmFile);
-		cv::Mat_<double> features;
-		if (sample(img, cv::Mat(), features, "LBP_RGB", segFaces))
+		cv::Mat features;
+		if (sample(img, cv::Mat(), features, "LBP_RGB_EYES_HAIR", segFaces))
 		{
 			float result = svm->predict(features, cv::noArray(), cv::ml::StatModel::RAW_OUTPUT);
 			float confidence = 1.0 / (1.0 + exp(-result));
 
-			std::cout << file << "  " << confidence << std::endl << std::endl;
+			int realClass = 0;
+			if (file.find("USUARIOS_MORPHING") != std::string::npos)
+				realClass = 1;
+			
+			std::cout << realClass << " " << file << "  " << confidence << std::endl << std::endl;
 
-			outFile << line.str().c_str() << "," << confidence << std::endl;
+			outFile << realClass << ";" << i/* line.str().c_str()*/ << ";" << confidence << std::endl;
 
 			//writeSample(features, outDirName, user, "00", "00");
+
+			
 		}
 	}
 	outFile.close();

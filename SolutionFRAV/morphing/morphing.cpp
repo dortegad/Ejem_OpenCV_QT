@@ -510,7 +510,7 @@ int main(int argc, char** argv)
 			char numberUserB[3];
 			sprintf(numberUserB, "%03d", j);
 			std::stringstream fileName;
-			fileName << outDirName.c_str() << "\\" << "USER_" << numberUserA << "_" << numberUserB << ".jpg";
+			fileName << outDirName.c_str() << "\\USER_" << numberUserA << "\\USER_" << numberUserA << "_" << numberUserB << ".jpg";
 			cv::imwrite(fileName.str(), img);
 
 			std::cout << fileName.str().c_str() << std::endl;

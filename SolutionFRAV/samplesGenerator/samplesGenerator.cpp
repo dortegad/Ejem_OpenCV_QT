@@ -17,12 +17,12 @@
 #define DLIB_JPEG_SUPPORT
 */
 
-
 #include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
 #include <vector>
+#include <stdio.h>
 
 
 #include <util_faces.h>
@@ -35,7 +35,7 @@
 //------------------------------------------------------------------------------
 bool sample(cv::Mat &imgRGB,
 	cv::Mat &imgDepth,
-	cv::Mat_<double> &features,
+	cv::Mat &features,
 	const std::string &samplesType,
 	bool segFace = true)
 {
@@ -50,7 +50,11 @@ bool sample(cv::Mat &imgRGB,
 			imgDepth = imgDepth(rectFace);
 	}
 
-	if (samplesType == "LBP_RGB_HAIR")
+	if (samplesType == "LBP_RGB_EYES_HAIR")
+	{
+		return (Util_LBP_CV::LBP_RGB_Eyes_Hair(imgRGB, features) != 0);
+	}
+	else if (samplesType == "LBP_RGB_HAIR")
 	{
 		return (Util_LBP_CV::LBP_RGB_Hair(imgRGB, features) != 0);
 	}
@@ -107,6 +111,8 @@ void writeSample(cv::Mat_<double> &features,
 	fileDes.release();
 
 	//std::cout << features << std::endl;
+
+	std::cout << outFileName.str().c_str() << std::endl;
 }
 
 /*PARA COPIAR UNOS FICHERO A UN DIRECTORIO
@@ -224,7 +230,10 @@ int main(int argc, char *argv[])
 			//std::string user;
 			//Util_FravAttack::infoFileUser(file, user);
 
-			//writeSample(features, outDirName, user, "00", "00");
+			char usuario[4];
+			sprintf_s(usuario,4,"%03d",i);
+
+			//writeSample(features, outDirName, usuario, "06", "00");
 		}
 	}
 

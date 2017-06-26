@@ -8,7 +8,7 @@
 #include "util_depth.h"
 
 //------------------------------------------------------------------------------
-int Util_LBP_Dlib::LBP_RGB(cv::Mat &img, cv::Mat_<double> &features)
+int Util_LBP_Dlib::LBP_RGB(cv::Mat &img, cv::Mat &features)
 {
 	dlib::cv_image<dlib::rgb_pixel> faceRGB(img);
 	std::vector<double> featuresRGBLBP;
@@ -23,7 +23,7 @@ int Util_LBP_Dlib::LBP_RGB(cv::Mat &img, cv::Mat_<double> &features)
 }
 
 //------------------------------------------------------------------------------
-int Util_LBP_Dlib::LBP_Depth(cv::Mat &imgDepth, cv::Mat_<double> &features)
+int Util_LBP_Dlib::LBP_Depth(cv::Mat &imgDepth, cv::Mat &features)
 {
 	cv::Mat_<double> imgDepthNorm;
 	Util_Depth::normalize(imgDepth, imgDepthNorm);

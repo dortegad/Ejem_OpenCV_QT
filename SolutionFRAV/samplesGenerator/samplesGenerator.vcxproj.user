@@ -3,7 +3,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>E:\MORPH\files_morph_one_per_user.txt E:\MORPH\DESCRIPTORES\LBP_CV_EYES\SAMPLES LBP_RGB_EYES</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>E:\MORPH\SCAN\USUARIOS_GENUINOS.txt E:\MORPH\DESCRIPTORES\LBP_CV\SAMPLES</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LocalDebuggerWorkingDirectory>$(SolutionDir)$(Platform)\$(Configuration)\</LocalDebuggerWorkingDirectory>
