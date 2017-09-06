@@ -96,7 +96,7 @@ int VisorAttack::stream()
 					std::vector<float>::iterator itMin = std::min_element(attackResults.begin(), attackResults.end());
 					float minScore = *itMin;
 					std::cout << "RESULT = " << minScore;
-					if (minScore > 0.28)
+					if (minScore > 0.34)/*0.28*/
 					{
 						ui.lBonaFide->setVisible(true);
 						std::cout << " = BONA FIDE" << std::endl;

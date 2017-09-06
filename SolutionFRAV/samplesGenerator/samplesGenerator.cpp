@@ -208,10 +208,11 @@ int main(int argc, char *argv[])
 
 
 //------------------------------------------------------------------------------
-int main(int argc, char *argv[])
+//CALCULO LOS LBPs POR REGIONES EL PELO LA CARA
+/*int main(int argc, char *argv[])
 {
-	std::string fileImgs = argv[1];// "E:\\DB_FINAL\\RS\\VISIBLE\\verifyFiles.txt";
-	std::string outDirName = argv[2]; //"E:\\DB_FINAL\\RS\\VISIBLE\\DESCRIPTORS\\LBP_RGB_NEW";
+	std::string fileImgs = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_GENUINOS_MORPHING_CARNET.txt"; //argv[1];
+	std::string outDirName = "E:\\MORPH\\DESCRIPTORES\\SCAN_MORPH_CARNET\\LBP_CV_HAIR"; //argv[2];
 
 	std::vector<std::string> files;
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
@@ -233,12 +234,66 @@ int main(int argc, char *argv[])
 			char usuario[4];
 			sprintf_s(usuario,4,"%03d",i);
 
-			//writeSample(features, outDirName, usuario, "06", "00");
+			std::string ataque = "06";
+			if (file.find("GENUINO") != std::string::npos)
+				ataque = "00";
+
+			writeSample(features, outDirName, usuario, ataque, "00");
 		}
 	}
 
 	std::getchar();
 
 	return 0;
-}
+}*/
 
+//------------------------------------------------------------------------------
+//CALCULO LOS LBPs POR REGIONES EL PELO LA CARA
+int main(int argc, char *argv[])
+{
+	std::string fileImgs = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_MORPHING_CARNET.txt"; //argv[1];
+	std::string outDirName = "E:\\MORPH\\DESCRIPTORES\\SCAN_MORPH_CARNET\\LBP_CV_HAIR"; //argv[2];
+
+	std::vector<std::string> files;
+	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
+
+	Util_Faces::init();
+	Util_Eyes::init();
+
+	for (int i = 0; i < numFiles; i++)
+	{
+		std::string file = files[i];
+		cv::Mat img = cv::imread(file);
+		
+		cv::imshow("FACE", img);
+
+		cv::Mat gray;
+		cv::cvtColor(img, gray, cv::COLOR_BGR2GRAY);
+		cv::GaussianBlur(gray, gray, cv::Size(3, 3), 0);
+		cv::Canny(gray, gray, 80, 150);
+		cv::imshow("EDGES FACE", gray);
+
+		cv::waitKey();
+		/*
+		cv::Mat_<double> features;
+		if (sample(img, cv::Mat(), features, "LBP_RGB_HAIR", true))
+		{
+			//std::string user;
+			//Util_FravAttack::infoFileUser(file, user);
+
+			char usuario[4];
+			sprintf_s(usuario, 4, "%03d", i);
+
+			std::string ataque = "06";
+			if (file.find("GENUINO") != std::string::npos)
+				ataque = "00";
+
+			writeSample(features, outDirName, usuario, ataque, "00");
+		}
+		*/
+	}
+
+	std::getchar();
+
+	return 0;
+}

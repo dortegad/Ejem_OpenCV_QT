@@ -158,7 +158,8 @@ int main_paraFicheroDeRealSense(int argc, char *argv[])
 }
 */
 
-//------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+//PROBANDO A SACAR LOS BORDES DE LAS IMAGENES
 int main(int argc, char *argv[])
 {
 	//LOS FICHEROS DE MORPHING
@@ -173,10 +174,10 @@ int main(int argc, char *argv[])
 	
 	//LOS FICHETOS DE MORPHIN SCANEADOS
 	bool segFaces = true;
-	std::string fileImgs   = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_GENUINOS_MORPHING_CARNET.txt";
-	std::string resultFile = "E:\\MORPH\\SCAN\\SCAN_RESULT_LBP_EYES_HAIR_GENUINOS_MORPHING_CARNET.txt";
+	std::string fileImgs   = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_GENUINOS_MORPHING.txt";
+	std::string resultFile = "E:\\MORPH\\SCAN\\SCAN_RESULT_LBP_EYES_HAIR_GENUINOS_MORPHING_SVM_SCAN.txt";
 
-	std::string svmFile = "E:\\MORPH\\DESCRIPTORES\\DIGITAL_MORPH\\LBP_CV_EYES_HAIR\\SAMPLES\\svm_attack_06.svm";
+	std::string svmFile = "E:\\MORPH\\DESCRIPTORES\\SCAN_MORPH\\LBP_CV_EYES_HAIR\\svm_attack_06.svm";
 
 	std::vector<std::string> files;
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);

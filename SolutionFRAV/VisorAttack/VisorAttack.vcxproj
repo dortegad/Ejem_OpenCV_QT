@@ -120,6 +120,7 @@ opencv_videoio320d.lib;opencv_videostab320d.lib;opencv_calib3d320d.lib;opencv_co
     <ClCompile Include="..\common\Cam3D.cpp" />
     <ClCompile Include="..\common\CamF200.cpp" />
     <ClCompile Include="..\common\util_depth.cpp" />
+    <ClCompile Include="..\common\util_eyes.cpp" />
     <ClCompile Include="..\common\util_faces.cpp" />
     <ClCompile Include="..\common\util_LBP_CV.cpp" />
     <ClCompile Include="GeneratedFiles\Debug\moc_visorAttack.cpp">

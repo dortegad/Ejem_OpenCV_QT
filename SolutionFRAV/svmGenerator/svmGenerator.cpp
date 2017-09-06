@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
 	if (argc < 2)
 		return 0;
 
-	std::string descriptorDIR = argv[1];// "D:\\DESCRIPTORS_PRUEBA\\";
+	std::string descriptorDIR = "E:\\MORPH\\DESCRIPTORES\\SCAN_MORPH\\LBP_CV_HAIR\\";//argv[1];// "D:\\DESCRIPTORS_PRUEBA\\";
 	std::vector <std::string> files;
 
 	Util_Files::filesDIR(descriptorDIR, files, "*.des");

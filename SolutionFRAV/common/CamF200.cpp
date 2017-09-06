@@ -288,7 +288,7 @@ float CamF200::isAttackFrame(cv::Mat &frameRGB, cv::Mat &frameDepth)
 	std::vector<float>::iterator itMin = std::min_element(scoresFusion.begin(), scoresFusion.end());
 	float minScore = *itMin;
 	std::cout << minScore;
-	if (minScore > 0.28)
+	if (minScore > 0.34)/*0.28*/
 		std::cout << " = BONA FIDE" << std::endl;
 	else
 		std::cout << " = ATTACK" << std::endl;
