@@ -21,7 +21,7 @@ bool Util_LandmarksFace::init()
 
 
 // ----------------------------------------------------------------------------------------
-void Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point> &points)
+void Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point2f> &points)
 {
 	try
 	{

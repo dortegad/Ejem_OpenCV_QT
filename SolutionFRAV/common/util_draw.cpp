@@ -2,7 +2,7 @@
 
 //------------------------------------------------------------------------------
 void Util_Draw::drawPoints(cv::Mat &img, 
-				std::vector<cv::Point> &points,
+				std::vector<cv::Point2f> &points,
 				cv::Scalar color)
 {
 	int numPoints = points.size();
@@ -16,30 +16,31 @@ void Util_Draw::drawPoints(cv::Mat &img,
 
 //------------------------------------------------------------------------------
 void Util_Draw::drawPoly(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Scalar color,
 	int width)
 {
-
 	std::vector<std::vector<cv::Point> > vectorPoints;
-	vectorPoints.push_back(points);
+	std::vector<cv::Point> pointsNorm(points.begin(), points.end());
+	vectorPoints.push_back(pointsNorm);
 	cv::drawContours(img, vectorPoints, 0, color, width, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
 }
 
 //------------------------------------------------------------------------------
 void Util_Draw::drawFilledPoly(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Scalar color)
 {
 
 	std::vector<std::vector<cv::Point> > vectorPoints;
-	vectorPoints.push_back(points);
+	std::vector<cv::Point> pointsNorm(points.begin(),points.end());
+	vectorPoints.push_back(pointsNorm);
 	cv::drawContours(img, vectorPoints, 0, color, CV_FILLED, 8, std::vector<cv::Vec4i>(), 0, cv::Point());
 }
 
 //------------------------------------------------------------------------------
 void Util_Draw::boundingImg(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Mat &subImg)
 {
 	cv::Rect rect = cv::boundingRect(points);

@@ -8,17 +8,17 @@
 class Util_Draw
 {
 public: static void drawPoints(cv::Mat &img, 
-				std::vector<cv::Point> &points,
+				std::vector<cv::Point2f> &points,
 				cv::Scalar color);
 public: static void drawPoly(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Scalar color,
 	int width = 1);
 public: static void drawFilledPoly(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Scalar color);
 public: static void boundingImg(cv::Mat &img,
-	std::vector<cv::Point> &points,
+	std::vector<cv::Point2f> &points,
 	cv::Mat &subImg);
 };
 
