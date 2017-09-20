@@ -95,6 +95,7 @@
     <ClCompile Include="..\common\util_draw.cpp" />
     <ClCompile Include="..\common\util_eyes.cpp" />
     <ClCompile Include="..\common\util_faces.cpp" />
+    <ClCompile Include="..\common\util_files.cpp" />
     <ClCompile Include="..\common\util_fravAttack.cpp" />
     <ClCompile Include="..\common\util_landmarksFace.cpp" />
     <ClCompile Include="..\common\util_LBP_CV.cpp" />

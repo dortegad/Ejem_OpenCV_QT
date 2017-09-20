@@ -18,34 +18,57 @@
 #include <util_fravAttack.h>
 #include <util_landmarksFace.h>
 #include <util_draw.h>
+#include <util_files.h>
 
 
 //------------------------------------------------------------------------------
-void imgsFaceZones(cv::Mat imgFace, std::vector<cv::Point2f> points)
+void imgsFaceZones(cv::Mat imgFace, 
+					std::vector<cv::Point2f> points,
+					cv::Mat &imgEyeLeft,
+					cv::Mat &imgEyeRight,
+					cv::Mat &imgMouth,
+					cv::Mat &imgNoise,
+					cv::Mat &imgForehead, 
+					cv::Mat &imgHearLeft, 
+					cv::Mat &imgHearRight,
+					cv::Mat &imgDropFace,
+					cv::Mat &imgBorderFace)
 {
+	//Check rect is into image
+	cv::Rect imgRect(0, 0, imgFace.cols, imgFace.rows);
+
 	//eye left 37 38 39 40 41 42
 	std::vector<cv::Point2f> eyeLeft;
 	for (int i = 36; i < 42; i++)
 		eyeLeft.push_back(points[i]);
-	cv::Mat imgEyeLeft;
-	Util_Draw::boundingImg(imgFace, eyeLeft, imgEyeLeft);
-	cv::imshow("LEFT EYE", imgEyeLeft);
+	//Util_Draw::boundingImg(imgFace, eyeLeft, imgEyeLeft);
+	cv::Rect rectEyeLeft = cv::boundingRect(eyeLeft);
+	rectEyeLeft.x = rectEyeLeft.x - (rectEyeLeft.width / 3);
+	rectEyeLeft.y = rectEyeLeft.y - (rectEyeLeft.height / 2);
+	rectEyeLeft.width = rectEyeLeft.width + ((rectEyeLeft.width / 3)*2);
+	rectEyeLeft.height = rectEyeLeft.height + ((rectEyeLeft.height / 2)*2);
+	imgEyeLeft = imgFace(rectEyeLeft & imgRect);
+	//cv::imshow("LEFT EYE", imgEyeLeft);
 
 	//eye right 43 44 45 46 47 48
 	std::vector<cv::Point2f> eyeRight;
 	for (int i = 42; i < 48; i++)
 		eyeRight.push_back(points[i]);
-	cv::Mat imgEyeRight;
-	Util_Draw::boundingImg(imgFace, eyeRight, imgEyeRight);
-	cv::imshow("RIGHT EYE", imgEyeRight);
+	//Util_Draw::boundingImg(imgFace, eyeRight, imgEyeRight);
+	cv::Rect rectEyeRight = cv::boundingRect(eyeRight);
+	rectEyeRight.x = rectEyeRight.x - (rectEyeRight.width / 3);
+	rectEyeRight.y = rectEyeRight.y - (rectEyeRight.height / 2);
+	rectEyeRight.width = rectEyeRight.width + ((rectEyeRight.width / 3) * 2);
+	rectEyeRight.height = rectEyeRight.height + ((rectEyeRight.height / 2) * 2);
+	imgEyeRight = imgFace(rectEyeRight & imgRect);
+	//cv::imshow("RIGHT EYE", imgEyeRight);
 
 	//mouth 49 - 68
 	std::vector<cv::Point2f> mouth;
 	for (int i = 48; i < 68; i++)
 		mouth.push_back(points[i]);
-	cv::Mat imgMouth;
 	Util_Draw::boundingImg(imgFace, mouth, imgMouth);
-	cv::imshow("MOUTH", imgMouth);
+	//cv::imshow("MOUTH", imgMouth);
 
 	//moise 28 - 36
 	std::vector<cv::Point2f> noise;
@@ -53,10 +76,8 @@ void imgsFaceZones(cv::Mat imgFace, std::vector<cv::Point2f> points)
 		noise.push_back(points[i]);
 	noise.push_back(points[39]);
 	noise.push_back(points[42]);
-	cv::Mat imgNoise;
 	Util_Draw::boundingImg(imgFace, noise, imgNoise);
-	cv::imshow("NOISE", imgNoise);
-
+	//cv::imshow("NOISE", imgNoise);
 
 	int half = points[8].y - points[36].y;
 	int y = points[36].y - half;
@@ -64,41 +85,75 @@ void imgsFaceZones(cv::Mat imgFace, std::vector<cv::Point2f> points)
 	int width = points[16].x - points[0].x;
 	int heigth = points[19].y - y;
 	cv::Rect foreheadRect(x, y, width, heigth);
-	cv::Mat imgForehead = imgFace(foreheadRect);
-	cv::imshow("forehead", imgForehead);
+	imgForehead = imgFace(foreheadRect & imgRect);
+	//cv::imshow("forehead", imgForehead);
 
 	width = points[36].x - points[0].x;
 	y = points[17].y;
 	x = points[0].x - width;
 	heigth = points[3].y - points[17].y;
 	cv::Rect hearLeftRect(x, y, width*1.5, heigth);
-	cv::Mat imgHearLeft = imgFace(hearLeftRect);
-	cv::imshow("hear left", imgHearLeft);
+	imgHearLeft = imgFace(hearLeftRect & imgRect);
+	//cv::imshow("hear left", imgHearLeft);
 
 	y = points[26].y;
 	x = points[26].x;
 	heigth = points[3].y - points[17].y;
 	cv::Rect hearRigthRect(x, y, width*1.5, heigth);
-	cv::Mat imgHearRigth = imgFace(hearRigthRect);
-	cv::imshow("hear rigth", imgHearRigth);
+	imgHearRight = imgFace(hearRigthRect & imgRect);
+	//cv::imshow("hear rigth", imgHearRight);
+
+	Util_Draw::boundingImg(imgFace, points, imgDropFace);
+	//cv::imshow("face", imgDropFace);
+
+	std::vector<cv::Point2f> pointsConvexHull;
+	cv::convexHull(points, pointsConvexHull, false);
+	cv::Mat_<uchar> mask(imgFace.rows, imgFace.cols, (uchar)0);
+	//drawFilledPoly(mask, pointsConvexHull, cv::Scalar(255));
+	Util_Draw::drawPoly(mask, pointsConvexHull, cv::Scalar(255), 80);
+	//cv::imshow("mask", mask);
+	imgFace.copyTo(imgBorderFace, mask);
+	//cv::imshow("border face", imgBorderFace);
+
+	cv::waitKey();
 }
 
 
 //------------------------------------------------------------------------------
 int main(int argc, char *argv[])
 {
-	//std::string fileImgs = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_GENUINOS_MORPHING_CARNET.txt";
-	//std::string fileImgs = "E:\\MORPH\\SCAN\\SCAN_USUARIOS_MORPHING_CARNET.txt";
-	//std::string fileImgs = "C:\\Users\\frav\\Desktop\\morphing_completo.txt";
-	std::string fileImgs = "C:\\NEW_MORPHING\\USER_000\\files.txt";
-
 	Util_LandmarksFace::init();
+
+	std::string fileImgs = "C:\\NEW_MORPHING\\files.txt";
+	std::string outDirName = "C:\\NEW_MORPHING_CROP";
+
 
 	std::vector<std::string> files;
 	int numFiles = Util_FravAttack::readSamplesFiles(fileImgs, files);
 
-	//Util_Faces::init();
+	std::stringstream outDirNoise;
+	outDirNoise << outDirName << "\\" << "NOISE";
+	Util_Files::createDIR(outDirNoise.str().c_str());
+	std::stringstream outDirEyes;
+	outDirEyes << outDirName << "\\" << "EYES";
+	Util_Files::createDIR(outDirEyes.str().c_str());
+	std::stringstream outDirMouth;
+	outDirMouth << outDirName << "\\" << "MOUTH";
+	Util_Files::createDIR(outDirMouth.str().c_str());
+	std::stringstream outDirForehead;
+	outDirForehead << outDirName << "\\" << "FOREHEAD";
+	Util_Files::createDIR(outDirForehead.str().c_str());
+	std::stringstream outDirHears;
+	outDirHears << outDirName << "\\" << "HEARS";
+	Util_Files::createDIR(outDirHears.str().c_str());
+	std::stringstream outDirDropFace;
+	outDirDropFace << outDirName << "\\" << "DROP_FACES";
+	Util_Files::createDIR(outDirDropFace.str().c_str());
+	std::stringstream outDirBorderFace;
+	outDirBorderFace << outDirName << "\\" << "BORDER_FACES";
+	Util_Files::createDIR(outDirBorderFace.str().c_str());
 
+	char numUser[3];
 	for (int i = 0; i < numFiles; i++)
 	{
 		std::string file = files[i];
@@ -107,69 +162,62 @@ int main(int argc, char *argv[])
 		std::vector<cv::Point2f> points;
 		Util_LandmarksFace::facePoints(img, points);
 
-		imgsFaceZones(img,points);
-
-		//mitad = 9.x - 37.x
-		//x frente = 37.x - mitad
-		//y frente = 1.y 
-		//ancho = 17.x - 1.x
-		//alto = mitad
-		
-		/*
-		int half = points[8].y - points[36].y;
-		int y = points[36].y - half;
-		int x = points[0].x;
-		int width = points[16].x - points[0].x;
-		int heigth = points[19].y - y;
-		cv::Rect foreheadRect(x, y, width, heigth);
-		cv::Mat imgForehead = img(foreheadRect);
-		cv::imshow("forehead", imgForehead);
-
-		int width= points[36].x - points[0].x;
-		int y = points[17].y;
-		int x = points[0].x - width;
-		int heigth = points[3].y - points[17].y;
-		cv::Rect foreheadRect(x, y, width*1.5, heigth);
-		cv::Mat imgForehead = img(foreheadRect);
-		cv::imshow("hear", imgForehead);
-		
-		
-		int y = points[26].y;
-		int x = points[26].x;
-		int heigth = points[3].y - points[17].y;
-		cv::Rect foreheadRect(x, y, width*1.5, heigth);
-		cv::Mat imgForehead = img(foreheadRect);
-		cv::imshow("hear", imgForehead);
-		*/
-
-
-		std::vector<cv::Point2f> pointsConvexHull;
-		cv::convexHull(points, pointsConvexHull, false);
-
-		cv::Mat imgToShow = img.clone();
-		Util_Draw::drawPoints(imgToShow, points, cv::Scalar(0,0,255));
-
-		Util_Draw::drawPoints(imgToShow, pointsConvexHull, cv::Scalar(255, 255, 255));
-
-		Util_Draw::drawPoly(imgToShow, pointsConvexHull, cv::Scalar(255, 255, 255));
-
-		cv::Mat_<uchar> mask(img.rows,img.cols,(uchar)0); 
-		//drawFilledPoly(mask, pointsConvexHull, cv::Scalar(255));
-		Util_Draw::drawPoly(mask, pointsConvexHull, cv::Scalar(255), 80);
-		//cv::imshow("mask", mask);
+		cv::Mat imgEyeLeft;
+		cv::Mat imgEyeRight;
+		cv::Mat imgMouth;
+		cv::Mat imgNoise;
+		cv::Mat imgForehead;
+		cv::Mat imgHearLeft;
+		cv::Mat imgHearRight;
 		cv::Mat imgDropFace;
-		img.copyTo(imgDropFace, mask);
-		cv::imshow("drop face", imgDropFace);
+		cv::Mat imgBorderFace;
+		imgsFaceZones(img, points,
+			imgEyeLeft,
+			imgEyeRight,
+			imgMouth,
+			imgNoise,
+			imgForehead,
+			imgHearLeft,
+			imgHearRight,
+			imgDropFace,
+			imgBorderFace);
 
-		cv::Rect rectFace = cv::boundingRect(points);
-		cv::Mat imgDrop = img(rectFace);
-		cv::imshow("drop", imgDrop);
+		sprintf(numUser, "%03d", i);
+		std::stringstream fileNoise;
+		fileNoise << outDirNoise.str().c_str() << "\\" << "NOISE_" << numUser << ".jpg";
 
-		cv::imshow("img", imgToShow);
-		cv::waitKey();
+		std::stringstream fileEyeLeft;
+		fileEyeLeft << outDirEyes.str().c_str() << "\\" << "EYE_LEFT_" << numUser << ".jpg";
+		std::stringstream fileEyesRight;
+		fileEyesRight << outDirEyes.str().c_str() << "\\" << "EYE_RIGHT_" << numUser << ".jpg";
 
+		std::stringstream fileMouth;
+		fileMouth << outDirMouth.str().c_str() << "\\" << "MOUTH_" << numUser << ".jpg";
+
+		std::stringstream fileForehead;
+		fileForehead << outDirForehead.str().c_str() << "\\" << "FOREHEAD_" << numUser << ".jpg";
+
+		std::stringstream fileHearLeft;
+		fileHearLeft << outDirHears.str().c_str() << "\\" << "HEAR_LEFT_" << numUser << ".jpg";
+		std::stringstream fileHearRight;
+		fileHearRight << outDirHears.str().c_str() << "\\" << "HEAR_RIGHT_" << numUser << ".jpg";
+
+		std::stringstream fileDropFace;
+		fileDropFace << outDirDropFace.str().c_str() << "\\" << "DROP_FACE_" << numUser << ".jpg";
+
+		std::stringstream fileBorderFace;
+		fileBorderFace << outDirBorderFace.str().c_str() << "\\" << "BORDER_FACE_" << numUser << ".jpg";
+
+		cv::imwrite(fileNoise.str(), imgNoise);
+		cv::imwrite(fileEyeLeft.str(), imgEyeLeft);
+		cv::imwrite(fileEyesRight.str(), imgEyeRight);
+		cv::imwrite(fileMouth.str(), imgMouth);
+		cv::imwrite(fileHearLeft.str(), imgHearLeft);
+		cv::imwrite(fileHearRight.str(), imgHearRight);
+		cv::imwrite(fileForehead.str(), imgForehead);
+		cv::imwrite(fileDropFace.str(), imgDropFace);
+		cv::imwrite(fileBorderFace.str(), imgBorderFace);
 	}
-
-	return 0;
+	delete[] numUser;
 }
 
