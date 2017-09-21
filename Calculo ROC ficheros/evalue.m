@@ -1,25 +1,41 @@
 %file Scores
 scoresFiles = fopen( 'scoresFiles.txt', 'wt' );
-numFiles = 100;
-scores = randi(100,1,numFiles*numFiles);
-for fileA = 1:numFiles;
-    for fileB = 1:numFiles;
-        fprintf( scoresFiles, '%d, %d, %d\n', fileA, fileB, scores(((fileA-1)*numFiles)+fileB));
-    end  
+numFiles = 10000;
+files = 1:numFiles;
+
+colum1 = repmat(files,[numFiles,1]);
+colum1 = reshape(colum1,numFiles*numFiles,1);
+
+colum2 = repmat(files,[numFiles,1])';
+colum2 = reshape(colum2,numFiles*numFiles,1);
+
+colum3 = randi(100,1,numFiles*numFiles)';
+
+scores = [colum1, colum2, colum3];
+
+%add localication error
+numErrors = 5;
+errors = randi(numErrors,1,numErrors);
+for error = 1:numErrors;
+    scores(scores(:,2)==errors(error),3)=-1;
 end
-fclose(scoresFiles);
+
+csvwrite('scoresFiles.txt',scores);
+
 
 %file correspondations
-correlationsFiles = fopen( 'correlations.txt', 'wt' );
-corresB = randperm(numFiles,numFiles);
-for fileA = 1:numFiles;
-    fprintf( correlationsFiles, '%d, %d\n', fileA, corresB(fileA));
-end
-fclose(correlationsFiles);
+corresColum2 = randperm(numFiles,numFiles)';
+correlations = [files',corresColum2];
+
+csvwrite('correlations.txt',scores);
+
 
 %read scores files
 scores = csvread('scoresFiles.txt')
- 
+
+%delete scores on error
+scores = scores(scores(:,3)~=-1,:);
+
 %read correspondations
 correlations = csvread('correlations.txt')
  
