@@ -124,8 +124,11 @@ int main(int argc, char *argv[])
 {
 	Util_LandmarksFace::init();
 
-	std::string fileImgs = "C:\\NEW_MORPHING\\files.txt";
-	std::string outDirName = "C:\\NEW_MORPHING_CROP";
+	//std::string fileImgs = "C:\\NEW_MORPHING\\files.txt";
+	std::string fileImgs = "C:\\FRAV_MORPH_sony\\files.txt";
+
+	//std::string outDirName = "C:\\NEW_MORPHING_CROP";
+	std::string outDirName = "C:\\FRAV_MORPH_sony_CROP";
 
 
 	std::vector<std::string> files;

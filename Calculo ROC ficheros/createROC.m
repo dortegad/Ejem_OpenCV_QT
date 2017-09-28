@@ -4,7 +4,7 @@ function [ rocData, auc, eer] = createROC(success, scores, curveName, plotCurve 
 
 %umbrales = unique(scores);
 umbrales = [min(scores):(max(scores)-min(scores))/100:max(scores)];
-rocData = zeros(length(umbrales),2);
+rocData = zeros(length(umbrales),3);
 eer = -1;
 %for (i=1:length(umbrales))
 %     th = umbrales(i);
@@ -22,16 +22,18 @@ for (th=0:0.001:1)
     FN = nnz((predic==0)&(success==1));
     FNR = FN/(VP+FN);
     
+    rocData(i,3) = th;
+    
     %ROC
-    rocData(i,2) = VPR;
     rocData(i,1) = FPR;
+    rocData(i,2) = VPR;
     
     %ROC_FRAV
-    rocData(i,1) = FPR;
-    rocData(i,2) = FNR;
+    %rocData(i,1) = FPR;
+    %rocData(i,2) = FNR;
     
     if ((FNR >= FPR) && (eer ==-1))
-        eer = FNR+FPR/2
+        eer = FNR+FPR/2;
     end
 end
 %rocData = sort(rocData);
@@ -42,8 +44,8 @@ if (plotCurve)
     plot(rocData(:,1),rocData(:,2));
     title({'roc ',curveName});
     legend( [curveName,' - AUC = ',num2str(auc),' - EER = ',num2str(eer)]);
-    ylabel('FNR - false negative rate');
-    xlabel('TPR - true positive rate'); 
+    ylabel('VPR - Verdaderos positivos rate');
+    xlabel('FPR - Falsos Positivos rate'); 
     %descr = {'517 users';curveName};
     %text(.025,0.15,descr);   
 end
