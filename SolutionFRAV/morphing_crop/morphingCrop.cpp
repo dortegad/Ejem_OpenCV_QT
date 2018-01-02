@@ -23,8 +23,66 @@
 using namespace cv;
 using namespace std;
 
-//----------------------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------------
+//PARA GENERAR LOS MORPHING DE AS IMAGENES DE LA DGP
 int main(int argc, char** argv)
+{
+	std::string dir = "c:\\FOTOS CHIP";
+	std::string dirDestino = "c:\\FOTOS CHIP MOR\\";
+	
+	Util_LandmarksFace::init();
+
+	std::vector<std::string> files;
+	int numFiles = Util_Files::filesDIR(dir, files, "*.jpg");
+	for (int file1 = 0; file1 < numFiles; file1++)
+	{
+		std::string fileName1 = files[file1];
+		std::string fileName1Dest = Util_Files::fileName(fileName1);
+
+		Mat img1 = imread(fileName1);
+		//cv::imshow("img1", img1);
+		for (int file2 = 0; file2 < numFiles; file2++)
+		{
+			std::string fileName2 = files[file2];
+			std::string fileName2Dest = Util_Files::fileName(fileName2);
+
+			std::cout << fileName1 << std::endl;
+			std::cout << fileName2 << std::endl;
+
+			Mat img2 = imread(fileName2);
+			//cv::imshow("img2", img2);
+			//cv::waitKey();
+
+			cv::Mat imgOut1;
+			cv::Mat imgOut2;
+			int result = Util_Morphing::morphingCrop(img1, img2, imgOut1, imgOut2);
+			if (result == 0)
+			{
+				std::stringstream fileOutName1;
+				fileOutName1 << dirDestino << fileName1Dest << "_" << fileName2Dest << "_1.jpg";
+				cv::imwrite(fileOutName1.str(),imgOut1);
+				//cv::imshow(fileOutName1.str(), imgOut1);
+
+				std::stringstream fileOutName2;
+				fileOutName2 << dirDestino << fileName1Dest << "_" << fileName2Dest << "_2.jpg";
+				cv::imwrite(fileOutName2.str(), imgOut2);
+				//cv::imshow(fileOutName2.str(), imgOut2);
+
+				cv::waitKey();
+				
+				imgOut1.release();
+				imgOut2.release();
+				img2.release();
+			}
+			else
+				std::cout << "No realizado morphing" << std::endl;
+		}
+		img1.release();
+	}
+}
+
+//----------------------------------------------------------------------------------------------
+int main_frav(int argc, char** argv)
 {
 	/*
 	std::string filename1("E:\\DB_FINAL\\SONY\\crop\\from\\users\\USUARIO_007_02.JPG");

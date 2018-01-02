@@ -151,8 +151,8 @@ int Util_Morphing::morphingCrop(cv::Mat &img1,
 							cv::Mat &outputImg_1,
 							cv::Mat &outputImg_2)
 {
-	int w = 600;
-	int h = 800;
+	int w = img1.cols;// 600;
+	int h = img2.rows;// 800;
 
 	std::vector<std::vector<cv::Point2f> > allPoints;
 
@@ -164,15 +164,27 @@ int Util_Morphing::morphingCrop(cv::Mat &img1,
 	//Read points
 	std::vector<cv::Point2f> points1;// = readPoints(filename1 + ".txt");
 	std::vector<cv::Point2f> points2;// = readPoints(filename2 + ".txt");
-	Util_LandmarksFace::facePoints(img1, points1);
-	Util_LandmarksFace::facePoints(img2, points2);
+	int numPoints = Util_LandmarksFace::facePoints(img1, points1);
+	if (numPoints == 0)
+	{
+		std::cout << "No se han localizado los landmarks" << std::endl;
+		return -1;
+	}
+	numPoints = Util_LandmarksFace::facePoints(img2, points2);
+	if (numPoints == 0)
+	{
+		std::cout << "No se han localizado los landmarks" << std::endl;
+		return -1;
+	}
 	allPoints.push_back(points1);
 	allPoints.push_back(points2);
 
-	img1.convertTo(img1, CV_32FC3, 1 / 255.0);
-	img2.convertTo(img2, CV_32FC3, 1 / 255.0);
-	images.push_back(img1);
-	images.push_back(img2);
+	cv::Mat fImg1;
+	cv::Mat fImg2;
+	img1.convertTo(fImg1, CV_32FC3, 1 / 255.0);
+	img2.convertTo(fImg2, CV_32FC3, 1 / 255.0);
+	images.push_back(fImg1);
+	images.push_back(fImg2);
 
 	int numImages = images.size();
 
@@ -306,7 +318,6 @@ int Util_Morphing::morphingCrop(cv::Mat &img1,
 
 	outputImg_1 = outputImgs[0];
 	outputImg_2 = outputImgs[1];
-
 
 	return 0;
 }

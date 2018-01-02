@@ -1,9 +1,9 @@
 
 
-createFiles('scoresFiles_0.txt', 'correlations_0.txt',1000);
+createFiles('scoresFiles_0.txt', 'correlations_0.txt',300);
 scores_0 = readFiles('scoresFiles_0.txt', 'correlations_0.txt');
 
-createFiles('scoresFiles_1.txt', 'correlations_1.txt',1000);
+createFiles('scoresFiles_1.txt', 'correlations_1.txt',300);
 scores_1 = readFiles('scoresFiles_1.txt', 'correlations_1.txt');
 
 close all

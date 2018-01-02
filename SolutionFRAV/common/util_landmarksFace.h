@@ -18,7 +18,6 @@ private: static dlib::frontal_face_detector detector;
 private: static dlib::shape_predictor sp;
 
 public: static bool init();
-public: static void facePoints(cv::Mat &img, 
-							  std::vector<cv::Point2f> &points);
+public: static int facePoints(cv::Mat &img, std::vector<cv::Point2f> &points);
 };
 

@@ -21,7 +21,7 @@ bool Util_LandmarksFace::init()
 
 
 // ----------------------------------------------------------------------------------------
-void Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point2f> &points)
+int Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point2f> &points)
 {
 	try
 	{
@@ -38,7 +38,7 @@ void Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point2f> &poin
 		//	return 0;
 		//}
 
-		float inv = 3;
+		float inv = 1;
 		cv::Mat imgMat;
 		cv::resize(img, imgMat, cv::Size(img.cols / inv, img.rows / inv));
 		dlib::cv_image<dlib::bgr_pixel> img(imgMat);
@@ -63,10 +63,12 @@ void Util_LandmarksFace::facePoints(cv::Mat &img, std::vector<cv::Point2f> &poin
 				points.push_back(cv::Point2f(x, y));
 			}
 		}
+		return points.size();
 	}
 	catch (std::exception& e)
 	{
-		std::cout << "\nexception thrown!" << std::endl;
+		std::cout << "Error al detectar landmark" << std::endl;
 		std::cout << e.what() << std::endl;
+		return 0;
 	}
 }

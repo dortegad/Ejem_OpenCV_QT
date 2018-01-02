@@ -3,7 +3,7 @@
 
 
 #include <Windows.h>
-
+//cambiado
 //------------------------------------------------------------------------------
 int Util_Files::filesDIR(const std::string &dir, std::vector<std::string> &files, const std::string &extension)
 {
@@ -36,4 +36,11 @@ int Util_Files::filesDIR(const std::string &dir, std::vector<std::string> &files
 bool Util_Files::createDIR(const std::string &dirPath)
 {
 	return CreateDirectoryA(dirPath.c_str(),NULL);
+}
+
+//-----------------------------------------------------------------------------
+std::string Util_Files::fileName(const std::string &dirPath)
+{
+	std::string fileName = dirPath.substr(dirPath.find_last_of("\\") + 1, dirPath.size() - dirPath.find_last_of("\\") - 1 - 4);
+	return fileName;
 }
